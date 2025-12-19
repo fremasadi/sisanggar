@@ -14,7 +14,7 @@
     <div class="col-md-6 mb-3">
         <label>Role</label>
         <select name="role" class="form-control" required>
-            @foreach(['admin', 'pelatih', 'peserta', 'pengunjung'] as $role)
+            @foreach(['admin', 'pelatih', 'orangtua', 'pengunjung'] as $role)
                 <option value="{{ $role }}" {{ old('role', $user->role) == $role ? 'selected' : '' }}>
                     {{ ucfirst($role) }}
                 </option>

@@ -1,12 +1,12 @@
 <x-app-layout>
     <h1 class="h3 mb-4 text-gray-800">Manajemen Pelatih</h1>
 
-    <a href="{{ route('admin.pelatih.create') }}" class="btn btn-success mb-3">
+    <a href="{{ route('admin.pelatih.create') }}" class="btn btn-danger mb-3">
         <i class="fas fa-plus"></i> Tambah Pelatih
     </a>
 
-    @if(session('success'))
-        <div class="alert alert-success">{{ session('success') }}</div>
+    @if(session('danger'))
+        <div class="alert alert-danger">{{ session('danger') }}</div>
     @endif
 
     <!-- Data Table -->
@@ -36,7 +36,7 @@
                             <td>{{ $p->jadwal_tetap ?? '-' }}</td>
                             <td>
                                 @if(optional($p->user)->status_aktif)
-                                    <span class="badge bg-success text-white">Aktif</span>
+                                    <span class="badge bg-danger text-white">Aktif</span>
                                 @else
                                     <span class="badge bg-secondary text-white">Nonaktif</span>
                                 @endif

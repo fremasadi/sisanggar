@@ -80,19 +80,19 @@
                 <div class="w-24 h-1 bg-red-600 mx-auto mb-4"></div>
                 <p class="text-gray-600 max-w-2xl mx-auto">Sewa kostum tari tradisional berkualitas tinggi untuk berbagai acara dan keperluan</p>
             </div>
-            
+
             @if(isset($kostums) && $kostums->count() > 0)
                 <div class="grid md:grid-cols-3 lg:grid-cols-4 gap-6">
                     @foreach($kostums as $kostum)
                     <div class="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-2xl transition duration-300 transform hover:-translate-y-2">
                         <div class="h-48 overflow-hidden bg-gray-100 flex items-center justify-center">
                         @if($kostum->image)
-                            <img src="{{ asset('kostum/' . $kostum->image) }}" 
-                                alt="{{ $kostum->nama_kostum }}" 
+                            <img src="{{ asset('kostum/' . $kostum->image) }}"
+                                alt="{{ $kostum->nama_kostum }}"
                                 class="h-full w-full object-cover">
                         @else
-                            <img src="{{ asset('default/no-image.png') }}" 
-                                alt="No Image" 
+                            <img src="{{ asset('default/no-image.png') }}"
+                                alt="No Image"
                                 class="h-full w-full object-cover opacity-50">
                         @endif
                     </div>
@@ -101,10 +101,10 @@
                             <h3 class="text-xl font-semibold mb-2 text-gray-800">{{ $kostum->nama_kostum }}</h3>
                             <div class="space-y-4 mb-2">
                                 <p class="text-gray-600"><span class="font-semibold">Ukuran:</span> {{ $kostum->ukuran }}</p>
-                                <p class="text-2xl font-bold text-red-600">Rp {{ number_format($kostum->harga_sewa, 0, ',', '.') }}</p>
+                                <p class="text-1xl font-bold text-red-600">Rp {{ number_format($kostum->harga_sewa, 0, ',', '.') }}/Hari</p>
                                 <p class="text-sm text-gray-500">Stok: {{ $kostum->stok }} unit</p>
                             </div>
-                            <span class="inline-block px-3 py-2 text-xs font-semibold rounded-full {{ $kostum->status == 'tersedia' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
+                            <span class="inline-block px-3 py-3 text-xs font-semibold rounded-full {{ $kostum->status == 'tersedia' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
                                 {{ ucfirst($kostum->status) }}
                             </span>
                             @if($kostum->stok > 0 && $kostum->status == 'tersedia')
@@ -114,14 +114,14 @@
                                     <input type="hidden" name="kostum_id" value="{{ $kostum->id }}">
                                     <input type="hidden" name="quantity" value="1">
 
-                                    <button type="button" 
+                                    <button type="button"
                                             class="addToCartBtn w-full bg-red-600 text-white py-2 rounded-lg hover:bg-red-700 transition duration-300 flex items-center justify-center gap-2">
                                         Tambah Keranjang
                                     </button>
                                 </form>
 
                             @else
-                                <button disabled 
+                                <button disabled
                                     class="w-full bg-gray-400 text-white py-2 rounded-lg mt-4 cursor-not-allowed">
                                     Stok Habis
                                 </button>
@@ -142,13 +142,11 @@
         <div class="container mx-auto px-4 text-center">
             <h2 class="text-4xl font-bold mb-6">Siap Bergabung dengan Kami?</h2>
             <p class="text-xl mb-8 text-red-100">Daftar sekarang dan dapatkan kelas !</p>
-            <a href="https://wa.me/6281234567890?text=Halo%20saya%20ingin%20daftar%20kelas" 
+            <a href="https://wa.me/6281234567890?text=Halo%20saya%20ingin%20daftar%20kelas"
             target="_blank"
             class="bg-white text-red-700 px-10 py-4 rounded-full font-semibold hover:bg-red-50 transition duration-300 shadow-lg inline-block">
                 Daftar Sekarang
             </a>
-
-           
         </div>
     </section>
 @endsection

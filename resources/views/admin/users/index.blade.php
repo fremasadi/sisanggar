@@ -1,12 +1,12 @@
 <x-app-layout>
     <h1 class="h3 mb-4 text-gray-800">Manajemen Pengguna</h1>
 
-    <a href="{{ route('admin.users.create') }}" class="btn btn-success mb-3">
+    <a href="{{ route('admin.users.create') }}" class="btn btn-danger mb-3">
         <i class="fas fa-plus"></i> Tambah Pengguna
     </a>
 
-    @if(session('success'))
-        <div class="alert alert-success">{{ session('success') }}</div>
+    @if(session('danger'))
+        <div class="alert alert-danger">{{ session('danger') }}</div>
     @endif
 
     <div class="card mb-4">
@@ -35,7 +35,7 @@
                 </select>
             </div>
             <div class="col-md-2">
-                <button type="submit" class="btn btn-success w-100">
+                <button type="submit" class="btn btn-danger w-100">
                     <i class="bi bi-filter"></i> Filter
                 </button>
             </div>
@@ -77,7 +77,7 @@
                             </td>
                             <td>
                                 @if($user->status_aktif)
-                                    <span class="badge bg-success text-white">Aktif</span>
+                                    <span class="badge bg-danger text-white">Aktif</span>
                                 @else
                                     <span class="badge bg-secondary text-white">Nonaktif</span>
                                 @endif
@@ -90,7 +90,7 @@
                                     onsubmit="return confirm('Hapus pengguna ini?')">
                                     @csrf
                                     @method('DELETE')
-                                    <button class="btn btn-sm btn-success"><i class="fas fa-trash"></i></button>
+                                    <button class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
                                 </form>
                             </td>
                         </tr>

@@ -1,19 +1,19 @@
 <x-app-layout>
     <h1 class="h3 mb-4 text-gray-800">Manajemen Kostum</h1>
 
-    <a href="{{ route('admin.kostum.create') }}" class="btn btn-success mb-3">
+    <a href="{{ route('admin.kostum.create') }}" class="btn btn-danger mb-3">
         <i class="fas fa-plus"></i> Tambah Kostum
     </a>
 
-    @if(session('success'))
-        <div class="alert alert-success">{{ session('success') }}</div>
+    @if(session('danger'))
+        <div class="alert alert-danger">{{ session('danger') }}</div>
     @endif
 
     <!-- Filter -->
     <div class="card mb-4">
         <div class="card-body">
             <form method="GET" action="{{ route('admin.kostum.index') }}" class="row g-2">
-                
+
                 <div class="col-md-3">
                     <label class="form-label">Cari Kostum</label>
                     <input type="text" name="search" class="form-control"
@@ -30,7 +30,7 @@
                 </div>
 
                 <div class="col-md-2">
-                    <button class="btn btn-success w-100">Filter</button>
+                    <button class="btn btn-danger w-100">Filter</button>
                 </div>
 
                 <div class="col-md-2">
@@ -65,7 +65,7 @@
                             <td>{{ $k->stok }}</td>
                             <td>
                                 @if($k->status == 'tersedia')
-                                    <span class="badge bg-success text-white">Tersedia</span>
+                                    <span class="badge bg-danger text-white">Tersedia</span>
                                 @else
                                     <span class="badge bg-secondary text-white">Tidak</span>
                                 @endif

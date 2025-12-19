@@ -1,5 +1,5 @@
 <!-- Sidebar -->
-<ul class="navbar-nav bg-gradient-success sidebar sidebar-dark accordion" id="accordionSidebar">
+<ul class="navbar-nav bg-gradient-danger sidebar sidebar-dark accordion" id="accordionSidebar">
 
     <!-- Brand -->
     <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{{ route('dashboard') }}">
@@ -22,7 +22,7 @@
     <hr class="sidebar-divider">
 
     {{-- ✅ Hanya tampil jika role adalah admin --}}
-@if(Auth::user()->role == 'admin')
+    @if(Auth::user()->role == 'admin')
 
     <div class="sidebar-heading">
         Manajemen Data
@@ -69,22 +69,6 @@
     </li>
 
 @endif
-
-
-    <hr class="sidebar-divider">
-
-    <!-- Logout -->
-    <li class="nav-item">
-        <a class="nav-link" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-            <i class="fas fa-sign-out-alt"></i>
-            <span>Logout</span>
-        </a>
-        <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-            @csrf
-        </form>
-    </li>
-
-    <hr class="sidebar-divider d-none d-md-block">
 
 </ul>
 <!-- End of Sidebar -->
