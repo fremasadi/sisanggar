@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\PelatihController;
 use App\Http\Controllers\Admin\KostumController;
+use App\Http\Controllers\Admin\BookingController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\PaymentController;
 
@@ -21,6 +22,10 @@ Route::middleware('auth')->group(function () {
         Route::resource('users', UserController::class);
         Route::resource('pelatih', PelatihController::class);
         Route::resource('kostum', KostumController::class);
+
+        Route::get('booking', [BookingController::class, 'index'])->name('booking.index');
+        Route::get('booking/{booking}', [BookingController::class, 'show'])->name('booking.show');
+        Route::patch('booking/{booking}/status', [BookingController::class, 'updateStatus'])->name('booking.update-status');
 
     });
 
