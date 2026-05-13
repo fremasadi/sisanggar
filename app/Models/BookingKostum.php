@@ -14,6 +14,14 @@ class BookingKostum extends Model
     protected $fillable = [
         'id_pengunjung',
         'order_id',
+        'nama_pemesan',
+        'no_hp_pemesan',
+        'no_hp_pemesan_normalized',
+        'tipe_booking',
+        'verification_status',
+        'verified_at',
+        'verified_by',
+        'verification_notes',
         'tanggal_booking',
         'tanggal_pengambilan',
         'tanggal_pengembalian',
@@ -26,6 +34,7 @@ class BookingKostum extends Model
         'tanggal_pengambilan' => 'date',
         'tanggal_pengembalian' => 'date',
         'total_biaya' => 'decimal:2',
+        'verified_at' => 'datetime',
     ];
 
     /**
@@ -43,6 +52,11 @@ class BookingKostum extends Model
     public function pengunjung()
     {
         return $this->belongsTo(User::class, 'id_pengunjung');
+    }
+
+    public function verifiedBy()
+    {
+        return $this->belongsTo(User::class, 'verified_by');
     }
 
     /**
@@ -83,5 +97,15 @@ class BookingKostum extends Model
     public function isPaid()
     {
         return in_array($this->status, ['dibayar', 'diambil', 'selesai']);
+    }
+
+    public function getPemesanNamaAttribute()
+    {
+        return $this->pengunjung->name ?? $this->nama_pemesan ?? '-';
+    }
+
+    public function getPemesanNoHpAttribute()
+    {
+        return $this->pengunjung->no_hp ?? $this->no_hp_pemesan ?? '-';
     }
 }

@@ -19,8 +19,6 @@
                         <th>Nama</th>
                         <th>Email</th>
                         <th>No HP</th>
-                        <th>Bidang Tari</th>
-                        <th>Jadwal Tetap</th>
                         <th>Status</th>
                         <th width="160">Aksi</th>
                     </tr>
@@ -32,8 +30,6 @@
                             <td>{{ $p->user->name ?? '-' }}</td>
                             <td>{{ $p->user->email ?? '-' }}</td>
                             <td>{{ $p->user->no_hp ?? '-' }}</td>
-                            <td>{{ $p->bidang_tari ?? '-' }}</td>
-                            <td>{{ $p->jadwal_tetap ?? '-' }}</td>
                             <td>
                                 @if(optional($p->user)->status_aktif)
                                     <span class="badge bg-danger text-white">Aktif</span>
@@ -55,7 +51,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="8" class="text-center text-muted">Belum ada data pelatih.</td>
+                            <td colspan="6" class="text-center text-muted">Belum ada data pelatih.</td>
                         </tr>
                     @endforelse
                 </tbody>

@@ -1,0 +1,73 @@
+<x-app-layout>
+    <h1 class="h3 mb-4 text-gray-800">Kelompok Saya</h1>
+
+    @if(!$anggota)
+        <div class="alert alert-info">Anda belum terdaftar pada kelompok aktif.</div>
+    @else
+        <div class="card shadow mb-4">
+            <div class="card-body">
+                <h3 class="h5">{{ $anggota->kelompok->nama_kelompok }}</h3>
+                <p class="mb-1">Pelatih: <strong>{{ $anggota->kelompok->pelatih->name ?? '-' }}</strong></p>
+                <p class="mb-0">Tanggal Masuk: {{ $anggota->tanggal_masuk->format('d/m/Y') }}</p>
+            </div>
+        </div>
+
+        <div class="card shadow mb-4">
+            <div class="card-header">Jadwal Latihan</div>
+            <div class="card-body">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Hari</th>
+                            <th>Jam</th>
+                            <th>Lokasi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($anggota->kelompok->jadwals as $jadwal)
+                            <tr>
+                                <td>{{ $jadwal->hari }}</td>
+                                <td>{{ substr($jadwal->jam_mulai, 0, 5) }} - {{ substr($jadwal->jam_selesai, 0, 5) }}</td>
+                                <td>{{ $jadwal->lokasi ?: '-' }}</td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="3" class="text-center text-muted">Belum ada jadwal latihan.</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="card shadow">
+            <div class="card-header">Jadwal Ujian</div>
+            <div class="card-body">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Ujian</th>
+                            <th>Tanggal</th>
+                            <th>Lokasi</th>
+                            <th>Tujuan</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($anggota->kelompok->ujians as $ujian)
+                            <tr>
+                                <td>{{ $ujian->nama_ujian }}</td>
+                                <td>{{ $ujian->tanggal_ujian->format('d/m/Y') }}</td>
+                                <td>{{ $ujian->lokasi ?: '-' }}</td>
+                                <td>{{ $ujian->kelompokTujuan->nama_kelompok ?? '-' }}</td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="4" class="text-center text-muted">Belum ada jadwal ujian.</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    @endif
+</x-app-layout>

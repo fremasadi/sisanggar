@@ -64,20 +64,45 @@
             </a>
         </li>
 
-        <li class="nav-item disabled">
-            <a class="nav-link text-muted" style="pointer-events: none; opacity: 0.5;" href="#">
-                <i class="fas fa-fw fa-calendar-alt"></i>
-                <span>Jadwal Latihan</span>
+        <li class="nav-item {{ request()->is('admin/kelompok*') ? 'active' : '' }}">
+            <a class="nav-link" href="{{ route('admin.kelompok.index') }}">
+                <i class="fas fa-fw fa-layer-group"></i>
+                <span>Kelompok</span>
             </a>
         </li>
 
-        <li class="nav-item disabled">
-            <a class="nav-link text-muted" style="pointer-events: none; opacity: 0.5;" href="#">
+        <li class="nav-item {{ request()->is('admin/spp*') ? 'active' : '' }}">
+            <a class="nav-link" href="{{ route('admin.spp.index') }}">
                 <i class="fas fa-fw fa-money-bill-wave"></i>
-                <span>Keuangan</span>
+                <span>SPP Peserta</span>
             </a>
         </li>
 
+    @elseif(Auth::user()->role == 'peserta')
+        <hr class="sidebar-divider">
+
+        <div class="sidebar-heading">Peserta</div>
+
+        <li class="nav-item {{ request()->is('peserta/spp*') ? 'active' : '' }}">
+            <a class="nav-link" href="{{ route('peserta.spp.index') }}">
+                <i class="fas fa-fw fa-money-bill-wave"></i>
+                <span>Tagihan SPP</span>
+            </a>
+        </li>
+
+        <li class="nav-item {{ request()->is('peserta/kelompok*') ? 'active' : '' }}">
+            <a class="nav-link" href="{{ route('peserta.kelompok.show') }}">
+                <i class="fas fa-fw fa-users"></i>
+                <span>Kelompok Saya</span>
+            </a>
+        </li>
+
+        <li class="nav-item {{ request()->is('peserta/ujian*') ? 'active' : '' }}">
+            <a class="nav-link" href="{{ route('peserta.ujian.index') }}">
+                <i class="fas fa-fw fa-graduation-cap"></i>
+                <span>Ujian Saya</span>
+            </a>
+        </li>
     @endif
 
     <hr class="sidebar-divider d-none d-md-block">

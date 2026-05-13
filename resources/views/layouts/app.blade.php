@@ -64,6 +64,7 @@
     <script src="{{ asset('sb-admin-2/vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
     <script src="{{ asset('sb-admin-2/vendor/jquery-easing/jquery.easing.min.js') }}"></script>
     <script src="{{ asset('sb-admin-2/js/sb-admin-2.min.js') }}"></script>
+    @stack('scripts')
 
 </body>
 </html>

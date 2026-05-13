@@ -15,13 +15,15 @@ class Pelatih extends Model
 
     protected $fillable = [
         'id_pelatih',
-        'bidang_tari',
-        'jadwal_tetap',
     ];
 
-    // Relasi ke model User
     public function user()
     {
         return $this->belongsTo(User::class, 'id_pelatih');
+    }
+
+    public function kelompoks()
+    {
+        return $this->hasMany(Kelompok::class, 'pelatih_id', 'id_pelatih');
     }
 }

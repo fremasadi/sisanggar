@@ -10,18 +10,9 @@
             </option>
         @endforeach
     </select>
-</div>
-
-<div class="mb-3">
-    <label for="bidang_tari" class="form-label">Bidang Tari</label>
-    <input type="text" name="bidang_tari" id="bidang_tari" class="form-control"
-           value="{{ old('bidang_tari', $pelatih->bidang_tari ?? '') }}" required>
-</div>
-
-<div class="mb-3">
-    <label for="jadwal_tetap" class="form-label">Jadwal Tetap</label>
-    <textarea name="jadwal_tetap" id="jadwal_tetap" class="form-control" rows="3"
-              placeholder="Contoh: Senin & Rabu 15:00 - 17:00">{{ old('jadwal_tetap', $pelatih->jadwal_tetap ?? '') }}</textarea>
+    @error('id_pelatih')
+        <div class="text-danger small mt-1">{{ $message }}</div>
+    @enderror
 </div>
 
 <div class="text-end">

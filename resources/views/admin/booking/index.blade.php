@@ -28,6 +28,16 @@
                     </select>
                 </div>
 
+                <div class="col-md-2">
+                    <label class="form-label">Verifikasi</label>
+                    <select name="verification_status" class="form-select">
+                        <option value="">Semua</option>
+                        <option value="pending" {{ request('verification_status') == 'pending' ? 'selected' : '' }}>Pending</option>
+                        <option value="confirmed" {{ request('verification_status') == 'confirmed' ? 'selected' : '' }}>Confirmed</option>
+                        <option value="rejected" {{ request('verification_status') == 'rejected' ? 'selected' : '' }}>Rejected</option>
+                    </select>
+                </div>
+
                 <div class="col-md-2 d-flex align-items-end">
                     <button class="btn btn-danger w-100">Filter</button>
                 </div>
@@ -48,12 +58,14 @@
                     <tr>
                         <th>No</th>
                         <th>Order ID</th>
-                        <th>Pengunjung</th>
+                        <th>Pemesan</th>
+                        <th>Tipe</th>
                         <th>Tgl Booking</th>
                         <th>Pengambilan</th>
                         <th>Pengembalian</th>
                         <th>Total Biaya</th>
                         <th>Status</th>
+                        <th>Verifikasi</th>
                         <th width="80">Aksi</th>
                     </tr>
                 </thead>
@@ -62,7 +74,15 @@
                         <tr>
                             <td>{{ $bookings->firstItem() + $key }}</td>
                             <td><code>{{ $booking->order_id }}</code></td>
-                            <td>{{ $booking->pengunjung->name ?? '-' }}</td>
+                            <td>
+                                <div class="fw-semibold">{{ $booking->pemesan_nama }}</div>
+                                <small class="text-muted">{{ $booking->pemesan_no_hp }}</small>
+                            </td>
+                            <td>
+                                <span class="badge bg-{{ $booking->tipe_booking === 'manual' ? 'secondary' : 'primary' }}">
+                                    {{ ucfirst($booking->tipe_booking ?? 'online') }}
+                                </span>
+                            </td>
                             <td>{{ $booking->tanggal_booking->format('d/m/Y') }}</td>
                             <td>{{ \Carbon\Carbon::parse($booking->tanggal_pengambilan)->format('d/m/Y') }}</td>
                             <td>{{ \Carbon\Carbon::parse($booking->tanggal_pengembalian)->format('d/m/Y') }}</td>
@@ -83,6 +103,18 @@
                                 </span>
                             </td>
                             <td>
+                                @php
+                                    $verificationBadge = [
+                                        'pending' => 'warning',
+                                        'confirmed' => 'success',
+                                        'rejected' => 'danger',
+                                    ][$booking->verification_status ?? 'pending'] ?? 'secondary';
+                                @endphp
+                                <span class="badge bg-{{ $verificationBadge }}">
+                                    {{ ucfirst($booking->verification_status ?? 'pending') }}
+                                </span>
+                            </td>
+                            <td>
                                 <a href="{{ route('admin.booking.show', $booking) }}"
                                    class="btn btn-sm btn-info text-white">
                                     <i class="fas fa-eye"></i>
@@ -91,7 +123,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="9" class="text-center text-muted">Belum ada data booking.</td>
+                            <td colspan="11" class="text-center text-muted">Belum ada data booking.</td>
                         </tr>
                     @endforelse
                 </tbody>

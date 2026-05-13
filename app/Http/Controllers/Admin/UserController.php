@@ -54,7 +54,7 @@ class UserController extends Controller
         ]);
 
         $validated['password'] = Hash::make($validated['password']);
-        $validated['status_aktif'] = $request->has('status_aktif');
+        $validated['status_aktif'] = $request->boolean('status_aktif');
 
         User::create($validated);
 
@@ -83,7 +83,7 @@ class UserController extends Controller
             unset($validated['password']);
         }
 
-        $validated['status_aktif'] = $request->has('status_aktif');
+        $validated['status_aktif'] = $request->boolean('status_aktif');
 
         $user->update($validated);
 

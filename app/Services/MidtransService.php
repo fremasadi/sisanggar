@@ -41,6 +41,8 @@ class MidtransService
             ],
             'callbacks' => [
                 'finish' => route('payment.finish'),
+                'unfinish' => route('payment.unfinish'),
+                'error' => route('payment.error'),
             ],
         ];
 

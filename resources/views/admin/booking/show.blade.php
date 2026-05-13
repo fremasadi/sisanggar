@@ -25,12 +25,16 @@
                             <td><code>{{ $booking->order_id }}</code></td>
                         </tr>
                         <tr>
-                            <td class="text-muted">Pengunjung</td>
-                            <td>{{ $booking->pengunjung->name ?? '-' }}</td>
+                            <td class="text-muted">Pemesan</td>
+                            <td>{{ $booking->pemesan_nama }}</td>
                         </tr>
                         <tr>
-                            <td class="text-muted">Email</td>
-                            <td>{{ $booking->pengunjung->email ?? '-' }}</td>
+                            <td class="text-muted">Nomor HP</td>
+                            <td>{{ $booking->pemesan_no_hp }}</td>
+                        </tr>
+                        <tr>
+                            <td class="text-muted">Tipe Booking</td>
+                            <td>{{ ucfirst($booking->tipe_booking ?? 'online') }}</td>
                         </tr>
                         <tr>
                             <td class="text-muted">Tgl Booking</td>
@@ -63,6 +67,10 @@
                                 @endphp
                                 <span class="badge bg-{{ $badge }}">{{ ucfirst($booking->status) }}</span>
                             </td>
+                        </tr>
+                        <tr>
+                            <td class="text-muted">Verifikasi</td>
+                            <td>{{ ucfirst($booking->verification_status ?? 'pending') }}</td>
                         </tr>
                     </table>
                 </div>
@@ -118,7 +126,12 @@
                             </tr>
                         </table>
                     @else
-                        <p class="text-muted mb-0">Belum ada data pembayaran.</p>
+                        <p class="text-muted mb-2">Belum ada data pembayaran.</p>
+                        @if($booking->tipe_booking === 'manual' && $booking->no_hp_pemesan_normalized)
+                            <a href="https://wa.me/{{ $booking->no_hp_pemesan_normalized }}" target="_blank" class="btn btn-success btn-sm">
+                                <i class="fab fa-whatsapp"></i> Hubungi via WhatsApp
+                            </a>
+                        @endif
                     @endif
                 </div>
             </div>
@@ -166,6 +179,41 @@
                     </tr>
                 </tfoot>
             </table>
+        </div>
+    </div>
+
+    <div class="card shadow mb-4">
+        <div class="card-header bg-primary text-white fw-bold">
+            <i class="fas fa-check-circle me-1"></i> Verifikasi Booking
+        </div>
+        <div class="card-body">
+            <form method="POST" action="{{ route('admin.booking.update-verification', $booking) }}" class="row g-3">
+                @csrf
+                @method('PATCH')
+                <div class="col-md-3">
+                    <label class="form-label">Status Verifikasi</label>
+                    <select name="verification_status" class="form-select">
+                        @foreach(['pending', 'confirmed', 'rejected'] as $status)
+                            <option value="{{ $status }}" {{ ($booking->verification_status ?? 'pending') === $status ? 'selected' : '' }}>
+                                {{ ucfirst($status) }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="col-md-7">
+                    <label class="form-label">Catatan Verifikasi</label>
+                    <textarea name="verification_notes" class="form-control" rows="2">{{ old('verification_notes', $booking->verification_notes) }}</textarea>
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button class="btn btn-primary w-100">Simpan</button>
+                </div>
+            </form>
+
+            @if($booking->verifiedBy)
+                <small class="text-muted d-block mt-3">
+                    Diverifikasi oleh {{ $booking->verifiedBy->name }} pada {{ optional($booking->verified_at)->format('d/m/Y H:i') }}
+                </small>
+            @endif
         </div>
     </div>
 

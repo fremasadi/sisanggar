@@ -10,13 +10,15 @@ class UserSeeder extends Seeder
 {
     public function run(): void
     {
-        User::create([
-            'name' => 'Admin Utama',
-            'email' => 'admin@gmail.com',
-            'no_hp' => '081234567890',
-            'role' => 'admin',
-            'status_aktif' => true,
-            'password' => Hash::make('password123'),
-        ]);
+        User::updateOrCreate(
+            ['email' => 'admin@gmail.com'],
+            [
+                'name' => 'Admin Utama',
+                'no_hp' => '081234567890',
+                'role' => 'admin',
+                'status_aktif' => true,
+                'password' => Hash::make('password123'),
+            ]
+        );
     }
 }

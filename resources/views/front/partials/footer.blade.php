@@ -29,6 +29,9 @@
                         <a href="#kostum" class="text-gray-400 hover:text-white transition duration-300">Sewa Kostum</a>
                     </li>
                     <li>
+                        <a href="{{ route('guest-booking.history') }}" class="text-gray-400 hover:text-white transition duration-300">Cek Booking Tamu</a>
+                    </li>
+                    <li>
                         <a href="{{ route('login') }}" class="text-gray-400 hover:text-white transition duration-300">Portal Member</a>
                     </li>
                 </ul>

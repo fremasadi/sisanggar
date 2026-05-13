@@ -34,8 +34,6 @@ class PelatihController extends Controller
     {
         $validated = $request->validate([
             'id_pelatih' => 'required|exists:users,id|unique:pelatihs,id_pelatih',
-            'bidang_tari' => 'required|string|max:255',
-            'jadwal_tetap' => 'nullable|string',
         ]);
 
         Pelatih::create($validated);
@@ -59,8 +57,6 @@ class PelatihController extends Controller
     {
         $validated = $request->validate([
             'id_pelatih' => 'required|exists:users,id|unique:pelatihs,id_pelatih,' . $pelatih->id_pelatih . ',id_pelatih',
-            'bidang_tari' => 'required|string|max:255',
-            'jadwal_tetap' => 'nullable|string',
         ]);
 
         $pelatih->update($validated);

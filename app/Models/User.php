@@ -10,44 +10,55 @@ class User extends Authenticatable
 {
     use HasFactory, Notifiable;
 
-    /**
-     * Kolom yang bisa diisi mass-assignment
-     *
-     * @var array<int, string>
-     */
     protected $fillable = [
         'name',
         'email',
         'password',
-        'no_hp',         // ✅ kolom baru
-        'role',          // ✅ kolom baru
-        'status_aktif',  // ✅ kolom baru
+        'no_hp',
+        'role',
+        'status_aktif',
     ];
 
-    /**
-     * Kolom yang disembunyikan saat serialisasi
-     *
-     * @var array<int, string>
-     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    /**
-     * Cast atribut ke tipe data tertentu
-     *
-     * @var array<string, string>
-     */
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
-        'status_aktif' => 'boolean', // ✅ pastikan boolean saat di-cast
+        'status_aktif' => 'boolean',
     ];
 
     public function pelatih()
-{
-    return $this->hasOne(Pelatih::class, 'id_pelatih');
-}
+    {
+        return $this->hasOne(Pelatih::class, 'id_pelatih');
+    }
 
+    public function bookings()
+    {
+        return $this->hasMany(BookingKostum::class, 'id_pengunjung');
+    }
+
+    public function sppTagihans()
+    {
+        return $this->hasMany(SppTagihan::class, 'peserta_id');
+    }
+
+    public function kelompokPesertas()
+    {
+        return $this->hasMany(KelompokPeserta::class, 'peserta_id');
+    }
+
+    public function activeKelompokPeserta()
+    {
+        return $this->hasOne(KelompokPeserta::class, 'peserta_id')
+            ->where('status', 'aktif')
+            ->latestOfMany('tanggal_masuk');
+    }
+
+    public function hasilUjianKelompoks()
+    {
+        return $this->hasMany(HasilUjianKelompok::class, 'peserta_id');
+    }
 }

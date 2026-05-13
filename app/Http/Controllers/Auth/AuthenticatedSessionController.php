@@ -38,7 +38,10 @@ class AuthenticatedSessionController extends Controller
         return redirect()->route('dashboard');
     }
 
-    // 🔥 Default = pengunjung -> ke halaman /
+    if ($user->role === 'peserta') {
+        return redirect()->route('peserta.spp.index');
+    }
+
     return redirect('/');
 }
 

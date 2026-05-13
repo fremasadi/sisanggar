@@ -22,7 +22,6 @@
 
                 
                 @if (Route::has('login'))
-    @auth
         <!-- Cart Icon -->
         <a href="{{ route('cart.index') }}" class="relative inline-flex items-center">
             <svg class="w-6 h-6 text-gray-700 hover:text-red-600 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -39,6 +38,11 @@
             @endif
         </a>
 
+        <a href="{{ route('guest-booking.history') }}" class="text-gray-700 hover:text-red-600 font-medium transition duration-300">
+            Cek Booking
+        </a>
+
+    @auth
         <!-- User Dropdown -->
         <div class="relative inline-block text-left">
             <!-- Avatar -->
@@ -56,9 +60,32 @@
             <div id="userMenuDropdown"
                 class="hidden absolute right-0 mt-2 w-40 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
                 
-        <a href="{{ route('payment.history') }}" 
-                   class="block px-4 py-2 text-gray-700 hover:bg-gray-100">
-                    Riwayat 
+                @if(Auth::user()->role === 'peserta')
+                    <a href="{{ route('peserta.spp.index') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">
+                        Tagihan SPP
+                    </a>
+                    <a href="{{ route('peserta.kelompok.show') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">
+                        Kelompok
+                    </a>
+                @elseif(Auth::user()->role === 'admin')
+                    <a href="{{ route('dashboard') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">
+                        Dashboard
+                    </a>
+                @else
+                    <a href="{{ route('payment.history') }}" 
+                       class="block px-4 py-2 text-gray-700 hover:bg-gray-100">
+                        Riwayat
+                    </a>
+                @endif
+
+                @if(Auth::user()->role === 'pengunjung')
+                    <a href="{{ route('payment.history') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">
+                        Riwayat Saya
+                    </a>
+                @endif
+
+                <a href="{{ route('guest-booking.history') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">
+                    Cek Booking Tamu
                 </a>
 
                 <form method="POST" action="{{ route('logout') }}">
@@ -77,6 +104,10 @@
                 const btn = document.getElementById('userMenuBtn');
                 const dropdown = document.getElementById('userMenuDropdown');
 
+                if (!btn || !dropdown) {
+                    return;
+                }
+
                 if (btn.contains(e.target)) {
                     dropdown.classList.toggle('hidden');
                 } else if (!dropdown.contains(e.target)) {
@@ -85,7 +116,7 @@
             });
         </script>
 
-                @else
+    @else
                     <a href="{{ route('login') }}" class="text-gray-700 hover:text-red-600 font-medium transition duration-300">
                         Masuk
                     </a>
@@ -94,8 +125,8 @@
                             Daftar
                         </a>
                     @endif
-                @endauth
-            @endif
+    @endauth
+                @endif
             </div>
 
             <!-- Mobile Menu Button -->
@@ -113,12 +144,14 @@
                 <a href="#tentang" class="text-gray-700 hover:text-red-600 font-medium py-2 transition duration-300">Tentang</a>
                 <a href="#kostum" class="text-gray-700 hover:text-red-600 font-medium py-2 transition duration-300">Kostum</a>
                 <a href="#kontak" class="text-gray-700 hover:text-red-600 font-medium py-2 transition duration-300">Kontak</a>
+                <a href="{{ route('cart.index') }}" class="text-gray-700 hover:text-red-600 font-medium py-2 transition duration-300">Keranjang</a>
+                <a href="{{ route('guest-booking.history') }}" class="text-gray-700 hover:text-red-600 font-medium py-2 transition duration-300">Cek Booking</a>
                 
                 @if (Route::has('login'))
                     @auth
-                        <!-- <a href="{{ url('/dashboard') }}" class="bg-red-600 text-white px-6 py-2 rounded-full hover:bg-red-700 transition duration-300 font-medium text-center">
+                        <a href="{{ route('dashboard') }}" class="bg-red-600 text-white px-6 py-2 rounded-full hover:bg-red-700 transition duration-300 font-medium text-center">
                             Dashboard
-                        </a> -->
+                        </a>
                     @else
                         <a href="{{ route('login') }}" class="text-gray-700 hover:text-red-600 font-medium py-2 transition duration-300">
                             Masuk
@@ -136,7 +169,7 @@
 </nav>
 
 <script>
-    document.getElementById('mobile-menu-btn').addEventListener('click', function() {
+    document.getElementById('mobile-menu-btn')?.addEventListener('click', function() {
         const mobileMenu = document.getElementById('mobile-menu');
         mobileMenu.classList.toggle('hidden');
     });
