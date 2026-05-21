@@ -24,6 +24,17 @@ class UjianKelompokController extends Controller
             'keterangan' => 'nullable|string',
         ]);
 
+        $nextKelompok = $kelompok->nextKelompokInTrack();
+
+        if ($nextKelompok) {
+            if ((int) $validated['kelompok_tujuan_id'] !== (int) $nextKelompok->id) {
+                return back()->withInput()->with(
+                    'error',
+                    'Ujian kenaikan untuk ' . $kelompok->label_tingkatan . ' hanya bisa menuju ' . $nextKelompok->label_tingkatan . '.'
+                );
+            }
+        }
+
         DB::transaction(function () use ($kelompok, $validated) {
             $ujian = $kelompok->ujians()->create($validated);
 

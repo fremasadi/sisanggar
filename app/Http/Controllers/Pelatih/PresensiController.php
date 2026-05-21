@@ -1,0 +1,108 @@
+<?php
+
+namespace App\Http\Controllers\Pelatih;
+
+use App\Http\Controllers\Controller;
+use App\Models\Kelompok;
+use App\Models\Presensi;
+use App\Models\PresensiDetail;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+
+class PresensiController extends Controller
+{
+    public function index(Request $request)
+    {
+        $presensis = Presensi::with(['kelompok'])
+            ->whereHas('kelompok', function ($query) {
+                $query->where('pelatih_id', auth()->id());
+            })
+            ->when($request->filled('search'), function ($query) use ($request) {
+                $query->where(function ($subQuery) use ($request) {
+                    $subQuery->where('judul_pertemuan', 'like', '%' . $request->search . '%')
+                        ->orWhereHas('kelompok', function ($kelompokQuery) use ($request) {
+                            $kelompokQuery->where('nama_kelompok', 'like', '%' . $request->search . '%');
+                        });
+                });
+            })
+            ->latest('tanggal_presensi')
+            ->paginate(10);
+
+        return view('pelatih.presensi.index', compact('presensis'));
+    }
+
+    public function store(Request $request, Kelompok $kelompok)
+    {
+        $this->authorizeKelompok($kelompok);
+
+        $validated = $request->validate([
+            'tanggal_presensi' => 'required|date',
+            'judul_pertemuan' => 'nullable|string|max:255',
+            'materi' => 'nullable|string',
+            'catatan' => 'nullable|string',
+        ]);
+
+        $anggotaAktif = $kelompok->anggota()->where('status', 'aktif')->get();
+
+        if ($anggotaAktif->isEmpty()) {
+            return back()->with('error', 'Kelompok ini belum memiliki anggota aktif untuk dipresensikan.');
+        }
+
+        DB::transaction(function () use ($validated, $kelompok, $anggotaAktif) {
+            $presensi = Presensi::create([
+                'kelompok_id' => $kelompok->id,
+                'tanggal_presensi' => $validated['tanggal_presensi'],
+                'judul_pertemuan' => $validated['judul_pertemuan'] ?? null,
+                'materi' => $validated['materi'] ?? null,
+                'catatan' => $validated['catatan'] ?? null,
+                'dibuat_oleh' => auth()->id(),
+            ]);
+
+            foreach ($anggotaAktif as $anggota) {
+                PresensiDetail::create([
+                    'presensi_id' => $presensi->id,
+                    'peserta_id' => $anggota->peserta_id,
+                    'status_kehadiran' => 'hadir',
+                ]);
+            }
+        });
+
+        return redirect()->route('pelatih.kelompok.show', $kelompok)->with('success', 'Sesi presensi berhasil dibuat.');
+    }
+
+    public function show(Presensi $presensi)
+    {
+        $this->authorizePresensi($presensi);
+
+        $presensi->load(['kelompok', 'details.peserta']);
+
+        return view('pelatih.presensi.show', compact('presensi'));
+    }
+
+    public function update(Request $request, Presensi $presensi)
+    {
+        $this->authorizePresensi($presensi);
+
+        $validated = $request->validate([
+            'tanggal_presensi' => 'required|date',
+            'judul_pertemuan' => 'nullable|string|max:255',
+            'materi' => 'nullable|string',
+            'catatan' => 'nullable|string',
+        ]);
+
+        $presensi->update($validated);
+
+        return redirect()->route('pelatih.presensi.show', $presensi)->with('success', 'Informasi presensi berhasil diperbarui.');
+    }
+
+    private function authorizeKelompok(Kelompok $kelompok): void
+    {
+        abort_unless($kelompok->pelatih_id === auth()->id(), 403, 'Anda tidak berhak mengakses kelompok ini.');
+    }
+
+    private function authorizePresensi(Presensi $presensi): void
+    {
+        $presensi->loadMissing('kelompok');
+        $this->authorizeKelompok($presensi->kelompok);
+    }
+}

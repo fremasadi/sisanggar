@@ -35,7 +35,7 @@ class AuthenticatedSessionController extends Controller
     }
 
     if ($user->role === 'pelatih') {
-        return redirect()->route('dashboard');
+        return redirect()->route('pelatih.kelompok.index');
     }
 
     if ($user->role === 'peserta') {

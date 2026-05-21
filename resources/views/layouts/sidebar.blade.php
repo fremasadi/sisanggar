@@ -71,10 +71,43 @@
             </a>
         </li>
 
+        <li class="nav-item {{ request()->is('admin/presensi*') ? 'active' : '' }}">
+            <a class="nav-link" href="{{ route('admin.presensi.index') }}">
+                <i class="fas fa-fw fa-clipboard-check"></i>
+                <span>Presensi</span>
+            </a>
+        </li>
+
         <li class="nav-item {{ request()->is('admin/spp*') ? 'active' : '' }}">
             <a class="nav-link" href="{{ route('admin.spp.index') }}">
                 <i class="fas fa-fw fa-money-bill-wave"></i>
-                <span>SPP Peserta</span>
+                <span>SPP </span>
+            </a>
+        </li>
+
+    @elseif(Auth::user()->role == 'pelatih')
+        <hr class="sidebar-divider">
+
+        <div class="sidebar-heading">Pelatih</div>
+
+        <li class="nav-item {{ request()->is('pelatih/kelompok*') ? 'active' : '' }}">
+            <a class="nav-link" href="{{ route('pelatih.kelompok.index') }}">
+                <i class="fas fa-fw fa-users"></i>
+                <span>Peserta Binaan</span>
+            </a>
+        </li>
+
+        <li class="nav-item {{ request()->is('pelatih/presensi*') ? 'active' : '' }}">
+            <a class="nav-link" href="{{ route('pelatih.presensi.index') }}">
+                <i class="fas fa-fw fa-clipboard-check"></i>
+                <span>Presensi Peserta</span>
+            </a>
+        </li>
+
+        <li class="nav-item {{ request()->is('pelatih/ujian*') ? 'active' : '' }}">
+            <a class="nav-link" href="{{ route('pelatih.ujian.index') }}">
+                <i class="fas fa-fw fa-graduation-cap"></i>
+                <span>Nilai Ujian</span>
             </a>
         </li>
 
@@ -94,6 +127,13 @@
             <a class="nav-link" href="{{ route('peserta.kelompok.show') }}">
                 <i class="fas fa-fw fa-users"></i>
                 <span>Kelompok Saya</span>
+            </a>
+        </li>
+
+        <li class="nav-item {{ request()->is('peserta/presensi*') ? 'active' : '' }}">
+            <a class="nav-link" href="{{ route('peserta.presensi.index') }}">
+                <i class="fas fa-fw fa-clipboard-check"></i>
+                <span>Presensi Saya</span>
             </a>
         </li>
 

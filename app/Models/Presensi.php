@@ -5,20 +5,21 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class KelompokPeserta extends Model
+class Presensi extends Model
 {
     use HasFactory;
 
     protected $fillable = [
         'kelompok_id',
-        'peserta_id',
-        'tanggal_masuk',
-        'status',
+        'tanggal_presensi',
+        'judul_pertemuan',
+        'materi',
         'catatan',
+        'dibuat_oleh',
     ];
 
     protected $casts = [
-        'tanggal_masuk' => 'date',
+        'tanggal_presensi' => 'date',
     ];
 
     public function kelompok()
@@ -26,13 +27,13 @@ class KelompokPeserta extends Model
         return $this->belongsTo(Kelompok::class);
     }
 
-    public function peserta()
+    public function details()
     {
-        return $this->belongsTo(User::class, 'peserta_id');
+        return $this->hasMany(PresensiDetail::class)->with('peserta');
     }
 
-    public function presensiDetails()
+    public function dibuatOleh()
     {
-        return $this->hasMany(PresensiDetail::class, 'peserta_id', 'peserta_id');
+        return $this->belongsTo(User::class, 'dibuat_oleh');
     }
 }

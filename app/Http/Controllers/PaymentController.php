@@ -296,12 +296,6 @@ class PaymentController extends Controller
 
             if ($booking && $booking->status !== 'dibayar') {
                 $booking->update(['status' => 'dibayar']);
-
-                foreach ($booking->details as $detail) {
-                    if ($detail->kostum && $detail->kostum->stok >= $detail->quantity) {
-                        $detail->kostum->decrement('stok', $detail->quantity);
-                    }
-                }
             }
         }
 

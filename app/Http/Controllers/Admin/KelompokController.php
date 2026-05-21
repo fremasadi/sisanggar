@@ -32,6 +32,8 @@ class KelompokController extends Controller
     {
         $validated = $request->validate([
             'nama_kelompok' => 'required|string|max:255',
+            'jalur_tingkatan' => 'nullable|string|max:255',
+            'tingkat_nomor' => 'nullable|integer|min:1',
             'level_urutan' => 'required|integer|min:1',
             'pelatih_id' => 'nullable|exists:users,id',
             'deskripsi' => 'nullable|string',
@@ -50,13 +52,17 @@ class KelompokController extends Controller
             'pelatih',
             'anggota.peserta',
             'jadwals',
+            'presensis',
             'ujians.kelompokTujuan',
         ]);
 
         $pesertas = User::where('role', 'peserta')->where('status_aktif', true)->orderBy('name')->get();
-        $targetKelompoks = Kelompok::whereKeyNot($kelompok->id)->orderBy('level_urutan')->get();
+        $nextKelompok = $kelompok->nextKelompokInTrack();
+        $targetKelompoks = $nextKelompok
+            ? collect([$nextKelompok])
+            : Kelompok::whereKeyNot($kelompok->id)->orderBy('level_urutan')->get();
 
-        return view('admin.kelompok.show', compact('kelompok', 'pesertas', 'targetKelompoks'));
+        return view('admin.kelompok.show', compact('kelompok', 'pesertas', 'targetKelompoks', 'nextKelompok'));
     }
 
     public function edit(Kelompok $kelompok)
@@ -70,6 +76,8 @@ class KelompokController extends Controller
     {
         $validated = $request->validate([
             'nama_kelompok' => 'required|string|max:255',
+            'jalur_tingkatan' => 'nullable|string|max:255',
+            'tingkat_nomor' => 'nullable|integer|min:1',
             'level_urutan' => 'required|integer|min:1',
             'pelatih_id' => 'nullable|exists:users,id',
             'deskripsi' => 'nullable|string',

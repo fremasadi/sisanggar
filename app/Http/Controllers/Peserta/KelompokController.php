@@ -12,7 +12,9 @@ class KelompokController extends Controller
         $anggota = KelompokPeserta::with([
             'kelompok.pelatih',
             'kelompok.jadwals',
+            'kelompok.presensis',
             'kelompok.ujians.kelompokTujuan',
+            'presensiDetails.presensi',
         ])
             ->where('peserta_id', auth()->id())
             ->where('status', 'aktif')

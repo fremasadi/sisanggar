@@ -4,10 +4,18 @@
         <input type="text" name="nama_kelompok" value="{{ old('nama_kelompok', $kelompok->nama_kelompok) }}" class="form-control" required>
     </div>
     <div class="col-md-3 mb-3">
+        <label class="form-label">Jalur Tingkatan</label>
+        <input type="text" name="jalur_tingkatan" value="{{ old('jalur_tingkatan', $kelompok->jalur_tingkatan) }}" class="form-control" placeholder="Contoh: Pra Dasar">
+    </div>
+    <div class="col-md-3 mb-3">
+        <label class="form-label">Nomor Tingkat</label>
+        <input type="number" min="1" name="tingkat_nomor" value="{{ old('tingkat_nomor', $kelompok->tingkat_nomor) }}" class="form-control" placeholder="Contoh: 1">
+    </div>
+    <div class="col-md-3 mb-3">
         <label class="form-label">Level Urutan</label>
         <input type="number" min="1" name="level_urutan" value="{{ old('level_urutan', $kelompok->level_urutan ?? 1) }}" class="form-control" required>
     </div>
-    <div class="col-md-3 mb-3">
+    <div class="col-md-6 mb-3">
         <label class="form-label">Pelatih</label>
         <select name="pelatih_id" class="form-select">
             <option value="">- Pilih Pelatih -</option>
@@ -17,6 +25,12 @@
                 </option>
             @endforeach
         </select>
+    </div>
+    <div class="col-md-12 mb-2">
+        <small class="text-muted">
+            Jika kelompok ini bagian dari jenjang kenaikan kelas, isi `Jalur Tingkatan` dan `Nomor Tingkat`.
+            Contoh: `Pra Dasar` + `1`, lalu kelompok berikutnya `Pra Dasar` + `2`.
+        </small>
     </div>
     <div class="col-md-12 mb-3">
         <label class="form-label">Deskripsi</label>

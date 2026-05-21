@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\BookingKostum;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class BookingController extends Controller
 {
@@ -50,10 +51,41 @@ class BookingController extends Controller
             'status' => 'required|in:menunggu,dibayar,diambil,selesai,dibatalkan',
         ]);
 
-        $booking->update(['status' => $request->status]);
+        $newStatus = $request->status;
+        $oldStatus = $booking->status;
 
-        return redirect()->route('admin.booking.show', $booking)
-            ->with('success', 'Status booking berhasil diperbarui.');
+        try {
+            DB::transaction(function () use ($booking, $oldStatus, $newStatus) {
+                $booking->loadMissing('details.kostum');
+
+                if ($oldStatus !== 'diambil' && $newStatus === 'diambil') {
+                    foreach ($booking->details as $detail) {
+                        $kostum = $detail->kostum;
+
+                        if (!$kostum || $kostum->stok < $detail->quantity) {
+                            $namaKostum = $kostum?->nama_kostum ?? 'Kostum';
+                            throw new \RuntimeException("Stok {$namaKostum} tidak mencukupi untuk diambil.");
+                        }
+                    }
+
+                    foreach ($booking->details as $detail) {
+                        $detail->kostum?->decrement('stok', $detail->quantity);
+                    }
+                }
+
+                if ($oldStatus === 'diambil' && $newStatus !== 'diambil') {
+                    foreach ($booking->details as $detail) {
+                        $detail->kostum?->increment('stok', $detail->quantity);
+                    }
+                }
+
+                $booking->update(['status' => $newStatus]);
+            });
+        } catch (\RuntimeException $e) {
+            return redirect()->route('admin.booking.show', $booking)->with('error', $e->getMessage());
+        }
+
+        return redirect()->route('admin.booking.show', $booking)->with('success', 'Status booking berhasil diperbarui.');
     }
 
     public function updateVerification(Request $request, BookingKostum $booking)

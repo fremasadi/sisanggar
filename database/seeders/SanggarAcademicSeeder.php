@@ -7,6 +7,8 @@ use App\Models\JadwalKelompok;
 use App\Models\Kelompok;
 use App\Models\KelompokPeserta;
 use App\Models\Pelatih;
+use App\Models\Presensi;
+use App\Models\PresensiDetail;
 use App\Models\UjianKelompok;
 use App\Models\User;
 use Illuminate\Database\Seeder;
@@ -46,6 +48,7 @@ class SanggarAcademicSeeder extends Seeder
         $peserta3 = $this->makePeserta('peserta3@sisanggar.test', 'Citra Madya', '083333333333');
         $peserta4 = $this->makePeserta('peserta4@sisanggar.test', 'Dina Madya', '083444444444');
         $peserta5 = $this->makePeserta('peserta5@sisanggar.test', 'Eka Lanjut', '083555555555');
+        $admin = User::where('role', 'admin')->first();
 
         $pemula = Kelompok::updateOrCreate(
             ['nama_kelompok' => 'Kelompok Pemula A'],
@@ -111,6 +114,29 @@ class SanggarAcademicSeeder extends Seeder
         HasilUjianKelompok::updateOrCreate(
             ['ujian_kelompok_id' => $ujian->id, 'peserta_id' => $peserta2->id],
             ['hasil' => 'menunggu', 'nilai' => null, 'catatan' => 'Menunggu penilaian akhir.']
+        );
+
+        $presensiPemula = Presensi::updateOrCreate(
+            [
+                'kelompok_id' => $pemula->id,
+                'tanggal_presensi' => now()->subDays(7)->toDateString(),
+            ],
+            [
+                'judul_pertemuan' => 'Latihan Dasar Tangan',
+                'materi' => 'Gerak dasar dan keluwesan tangan',
+                'catatan' => 'Pertemuan demo presensi',
+                'dibuat_oleh' => $admin?->id,
+            ]
+        );
+
+        PresensiDetail::updateOrCreate(
+            ['presensi_id' => $presensiPemula->id, 'peserta_id' => $peserta1->id],
+            ['status_kehadiran' => 'hadir', 'catatan' => 'Tepat waktu']
+        );
+
+        PresensiDetail::updateOrCreate(
+            ['presensi_id' => $presensiPemula->id, 'peserta_id' => $peserta2->id],
+            ['status_kehadiran' => 'izin', 'catatan' => 'Izin sekolah']
         );
     }
 

@@ -69,5 +69,41 @@
                 </table>
             </div>
         </div>
+
+        <div class="card shadow mt-4">
+            <div class="card-header">Riwayat Presensi Saya</div>
+            <div class="card-body">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Tanggal</th>
+                            <th>Pertemuan</th>
+                            <th>Status</th>
+                            <th>Catatan</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @php
+                            $riwayatPresensi = $anggota->presensiDetails
+                                ->filter(fn ($detail) => optional($detail->presensi)->kelompok_id === $anggota->kelompok_id)
+                                ->sortByDesc(fn ($detail) => optional($detail->presensi)->tanggal_presensi)
+                                ->take(10);
+                        @endphp
+                        @forelse($riwayatPresensi as $detail)
+                            <tr>
+                                <td>{{ optional($detail->presensi?->tanggal_presensi)->format('d/m/Y') ?? '-' }}</td>
+                                <td>{{ $detail->presensi->judul_pertemuan ?? '-' }}</td>
+                                <td>{{ ucfirst($detail->status_kehadiran) }}</td>
+                                <td>{{ $detail->catatan ?: '-' }}</td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="4" class="text-center text-muted">Belum ada data presensi.</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
     @endif
 </x-app-layout>

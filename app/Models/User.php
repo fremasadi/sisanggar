@@ -61,4 +61,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(HasilUjianKelompok::class, 'peserta_id');
     }
+
+    public function presensiDetails()
+    {
+        return $this->hasMany(PresensiDetail::class, 'peserta_id');
+    }
 }
