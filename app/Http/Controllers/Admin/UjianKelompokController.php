@@ -12,7 +12,54 @@ use Illuminate\Support\Facades\DB;
 
 class UjianKelompokController extends Controller
 {
+    public function index(Request $request)
+    {
+        $ujians = UjianKelompok::with(['kelompok', 'kelompokTujuan'])
+            ->when($request->filled('search'), function ($query) use ($request) {
+                $query->where(function ($subQuery) use ($request) {
+                    $subQuery->where('nama_ujian', 'like', '%' . $request->search . '%')
+                        ->orWhereHas('kelompok', function ($kelompokQuery) use ($request) {
+                            $kelompokQuery->where('nama_kelompok', 'like', '%' . $request->search . '%');
+                        });
+                });
+            })
+            ->when($request->filled('kelompok_id'), function ($query) use ($request) {
+                $query->where('kelompok_id', $request->kelompok_id);
+            })
+            ->latest('tanggal_ujian')
+            ->paginate(10);
+
+        $kelompoks = Kelompok::where('status_aktif', true)->orderBy('level_urutan')->orderBy('nama_kelompok')->get();
+
+        return view('admin.ujian-kelompok.index', compact('ujians', 'kelompoks'));
+    }
+
     public function store(Request $request, Kelompok $kelompok)
+    {
+        $ujian = $this->createUjian($request, $kelompok);
+        if (!$ujian instanceof UjianKelompok) {
+            return $ujian;
+        }
+
+        return redirect()->route('admin.ujian-kelompok.show', $ujian)->with('success', 'Ujian kelompok berhasil dibuat.');
+    }
+
+    public function storeFromIndex(Request $request)
+    {
+        $validated = $request->validate([
+            'kelompok_id' => 'required|exists:kelompoks,id',
+        ]);
+
+        $kelompok = Kelompok::findOrFail($validated['kelompok_id']);
+        $ujian = $this->createUjian($request, $kelompok);
+        if (!$ujian instanceof UjianKelompok) {
+            return $ujian;
+        }
+
+        return redirect()->route('admin.ujian-kelompok.show', $ujian)->with('success', 'Ujian kelompok berhasil dibuat.');
+    }
+
+    private function createUjian(Request $request, Kelompok $kelompok)
     {
         $validated = $request->validate([
             'nama_ujian' => 'required|string|max:255',
@@ -35,7 +82,7 @@ class UjianKelompokController extends Controller
             }
         }
 
-        DB::transaction(function () use ($kelompok, $validated) {
+        return DB::transaction(function () use ($kelompok, $validated) {
             $ujian = $kelompok->ujians()->create($validated);
 
             $anggotaAktif = $kelompok->anggota()->where('status', 'aktif')->get();
@@ -46,9 +93,9 @@ class UjianKelompokController extends Controller
                     'hasil' => 'menunggu',
                 ]);
             }
-        });
 
-        return redirect()->route('admin.kelompok.show', $kelompok)->with('success', 'Ujian kelompok berhasil dibuat.');
+            return $ujian;
+        });
     }
 
     public function show(UjianKelompok $ujian)

@@ -28,13 +28,44 @@ class PresensiController extends Controller
             ->latest('tanggal_presensi')
             ->paginate(10);
 
-        return view('pelatih.presensi.index', compact('presensis'));
+        $kelompoks = Kelompok::where('pelatih_id', auth()->id())
+            ->where('status_aktif', true)
+            ->orderBy('level_urutan')
+            ->orderBy('nama_kelompok')
+            ->get();
+
+        return view('pelatih.presensi.index', compact('presensis', 'kelompoks'));
     }
 
     public function store(Request $request, Kelompok $kelompok)
     {
         $this->authorizeKelompok($kelompok);
+        $presensi = $this->createPresensi($request, $kelompok);
+        if (!$presensi instanceof Presensi) {
+            return $presensi;
+        }
 
+        return redirect()->route('pelatih.presensi.show', $presensi)->with('success', 'Sesi presensi berhasil dibuat.');
+    }
+
+    public function storeFromIndex(Request $request)
+    {
+        $validated = $request->validate([
+            'kelompok_id' => 'required|exists:kelompoks,id',
+        ]);
+
+        $kelompok = Kelompok::findOrFail($validated['kelompok_id']);
+        $this->authorizeKelompok($kelompok);
+        $presensi = $this->createPresensi($request, $kelompok);
+        if (!$presensi instanceof Presensi) {
+            return $presensi;
+        }
+
+        return redirect()->route('pelatih.presensi.show', $presensi)->with('success', 'Sesi presensi berhasil dibuat.');
+    }
+
+    private function createPresensi(Request $request, Kelompok $kelompok)
+    {
         $validated = $request->validate([
             'tanggal_presensi' => 'required|date',
             'judul_pertemuan' => 'nullable|string|max:255',
@@ -48,7 +79,7 @@ class PresensiController extends Controller
             return back()->with('error', 'Kelompok ini belum memiliki anggota aktif untuk dipresensikan.');
         }
 
-        DB::transaction(function () use ($validated, $kelompok, $anggotaAktif) {
+        return DB::transaction(function () use ($validated, $kelompok, $anggotaAktif) {
             $presensi = Presensi::create([
                 'kelompok_id' => $kelompok->id,
                 'tanggal_presensi' => $validated['tanggal_presensi'],
@@ -65,9 +96,9 @@ class PresensiController extends Controller
                     'status_kehadiran' => 'hadir',
                 ]);
             }
-        });
 
-        return redirect()->route('pelatih.kelompok.show', $kelompok)->with('success', 'Sesi presensi berhasil dibuat.');
+            return $presensi;
+        });
     }
 
     public function show(Presensi $presensi)

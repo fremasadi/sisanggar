@@ -137,9 +137,9 @@
     @endif
 
     <div class="row">
-        <div class="col-lg-6 mb-4">
+        <div class="col-lg-7 mb-4">
             <div class="card shadow h-100">
-                <div class="card-header bg-danger text-white">Tambah Peserta</div>
+                <div class="card-header bg-danger text-white">Tambah Anggota</div>
                 <div class="card-body">
                     <form action="{{ route('admin.kelompok-peserta.store', $kelompok) }}" method="POST" class="row g-2">
                         @csrf
@@ -147,7 +147,7 @@
                             @php $selectedPesertaIds = collect(old('peserta_ids', []))->map(fn ($id) => (string) $id); @endphp
 
                             <div class="d-flex justify-content-between align-items-center mb-2">
-                                <label class="form-label mb-0">Pilih Peserta</label>
+                                <label class="form-label mb-0">Pilih Anggota</label>
                                 <span class="badge bg-danger px-3 py-2" id="selected-participant-count">0 dipilih</span>
                             </div>
 
@@ -227,149 +227,15 @@
                             <textarea name="catatan" class="form-control" rows="2" placeholder="Catatan">{{ old('catatan') }}</textarea>
                         </div>
                         <div class="col-md-12">
-                            <button class="btn btn-danger">Tambah Peserta</button>
+                            <button class="btn btn-danger">Tambah Anggota</button>
                         </div>
                     </form>
                 </div>
             </div>
         </div>
 
-        <div class="col-lg-6 mb-4">
+        <div class="col-lg-5 mb-4">
             <div class="card shadow h-100">
-                <div class="card-header bg-primary text-white">Tambah Jadwal</div>
-                <div class="card-body">
-                    <form action="{{ route('admin.jadwal-kelompok.store', $kelompok) }}" method="POST" class="row g-2">
-                        @csrf
-                        <div class="col-md-4">
-                            <input type="text" name="hari" class="form-control" placeholder="Hari" required>
-                        </div>
-                        <div class="col-md-4">
-                            <input type="time" name="jam_mulai" class="form-control" required>
-                        </div>
-                        <div class="col-md-4">
-                            <input type="time" name="jam_selesai" class="form-control" required>
-                        </div>
-                        <div class="col-md-6">
-                            <input type="text" name="lokasi" class="form-control" placeholder="Lokasi">
-                        </div>
-                        <div class="col-md-6">
-                            <input type="text" name="catatan" class="form-control" placeholder="Catatan">
-                        </div>
-                        <div class="col-md-12">
-                            <button class="btn btn-primary">Tambah Jadwal</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="card shadow mb-4">
-        <div class="card-header bg-warning text-dark">Buat Sesi Presensi</div>
-        <div class="card-body">
-            <form action="{{ route('admin.presensi.store', $kelompok) }}" method="POST" class="row g-2">
-                @csrf
-                <div class="col-md-2">
-                    <input type="date" name="tanggal_presensi" class="form-control" value="{{ now()->toDateString() }}" required>
-                </div>
-                <div class="col-md-4">
-                    <input type="text" name="judul_pertemuan" class="form-control" placeholder="Judul pertemuan">
-                </div>
-                <div class="col-md-3">
-                    <input type="text" name="materi" class="form-control" placeholder="Materi singkat">
-                </div>
-                <div class="col-md-3">
-                    <input type="text" name="catatan" class="form-control" placeholder="Catatan">
-                </div>
-                <div class="col-md-12">
-                    <button class="btn btn-warning">Buat Presensi</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <div class="card shadow mb-4">
-        <div class="card-header bg-success text-white">Buat Ujian Kelompok</div>
-        <div class="card-body">
-            <form action="{{ route('admin.ujian-kelompok.store', $kelompok) }}" method="POST" class="row g-2">
-                @csrf
-                <div class="col-md-4">
-                    <input type="text" name="nama_ujian" class="form-control" placeholder="Nama ujian" required>
-                </div>
-                <div class="col-md-2">
-                    <input type="date" name="tanggal_ujian" class="form-control" required>
-                </div>
-                <div class="col-md-2">
-                    <input type="time" name="jam_mulai" class="form-control">
-                </div>
-                <div class="col-md-2">
-                    <input type="text" name="lokasi" class="form-control" placeholder="Lokasi">
-                </div>
-                <div class="col-md-2">
-                    <select name="status" class="form-select">
-                        <option value="draft">Draft</option>
-                        <option value="dibuka">Dibuka</option>
-                        <option value="selesai">Selesai</option>
-                    </select>
-                </div>
-                <div class="col-md-4">
-                    <select name="kelompok_tujuan_id" class="form-select">
-                        <option value="">- Kelompok Tujuan -</option>
-                        @foreach($targetKelompoks as $target)
-                            <option value="{{ $target->id }}" {{ (int) old('kelompok_tujuan_id', $nextKelompok->id ?? 0) === (int) $target->id ? 'selected' : '' }}>
-                                {{ $target->label_tingkatan ?? $target->nama_kelompok }}
-                            </option>
-                        @endforeach
-                    </select>
-                    @if($nextKelompok)
-                        <small class="text-muted d-block mt-1">Target kenaikan dikunci ke tingkatan berikutnya dalam jalur yang sama.</small>
-                    @endif
-                </div>
-                <div class="col-md-6">
-                    <input type="text" name="keterangan" class="form-control" placeholder="Keterangan">
-                </div>
-                <div class="col-md-2">
-                    <button class="btn btn-success w-100">Buat Ujian</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <div class="card shadow mb-4">
-        <div class="card-header">Riwayat Presensi Kelompok</div>
-        <div class="card-body">
-            <table class="table table-bordered align-middle">
-                <thead>
-                    <tr>
-                        <th>Tanggal</th>
-                        <th>Judul</th>
-                        <th>Materi</th>
-                        <th width="100">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($kelompok->presensis as $presensi)
-                        <tr>
-                            <td>{{ $presensi->tanggal_presensi->format('d/m/Y') }}</td>
-                            <td>{{ $presensi->judul_pertemuan ?: '-' }}</td>
-                            <td>{{ $presensi->materi ?: '-' }}</td>
-                            <td>
-                                <a href="{{ route('admin.presensi.show', $presensi) }}" class="btn btn-sm btn-info text-white">Detail</a>
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="4" class="text-center text-muted">Belum ada data presensi kelompok.</td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-lg-6 mb-4">
-            <div class="card shadow">
                 <div class="card-header">Anggota Kelompok</div>
                 <div class="card-body">
                     <table class="table table-bordered align-middle">
@@ -408,70 +274,6 @@
                     </table>
                 </div>
             </div>
-        </div>
-
-        <div class="col-lg-6 mb-4">
-            <div class="card shadow">
-                <div class="card-header">Jadwal Kelompok</div>
-                <div class="card-body">
-                    <table class="table table-bordered align-middle">
-                        <thead>
-                            <tr>
-                                <th>Hari</th>
-                                <th>Jam</th>
-                                <th>Lokasi</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @forelse($kelompok->jadwals as $jadwal)
-                                <tr>
-                                    <td>{{ $jadwal->hari }}</td>
-                                    <td>{{ substr($jadwal->jam_mulai, 0, 5) }} - {{ substr($jadwal->jam_selesai, 0, 5) }}</td>
-                                    <td>{{ $jadwal->lokasi ?: '-' }}</td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="3" class="text-center text-muted">Belum ada jadwal.</td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="card shadow">
-        <div class="card-header">Daftar Ujian</div>
-        <div class="card-body">
-            <table class="table table-bordered align-middle">
-                <thead>
-                    <tr>
-                        <th>Nama Ujian</th>
-                        <th>Tanggal</th>
-                        <th>Status</th>
-                        <th>Kelompok Tujuan</th>
-                        <th>Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($kelompok->ujians as $ujian)
-                        <tr>
-                            <td>{{ $ujian->nama_ujian }}</td>
-                            <td>{{ $ujian->tanggal_ujian->format('d/m/Y') }}</td>
-                            <td>{{ ucfirst($ujian->status) }}</td>
-                            <td>{{ $ujian->kelompokTujuan->nama_kelompok ?? '-' }}</td>
-                            <td>
-                                <a href="{{ route('admin.ujian-kelompok.show', $ujian) }}" class="btn btn-sm btn-info text-white">Detail</a>
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="5" class="text-center text-muted">Belum ada ujian.</td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
         </div>
     </div>
 </x-app-layout>

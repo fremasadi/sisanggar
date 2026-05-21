@@ -66,4 +66,14 @@ class User extends Authenticatable
     {
         return $this->hasMany(PresensiDetail::class, 'peserta_id');
     }
+
+    public function sertifikats()
+    {
+        return $this->hasMany(Sertifikat::class, 'peserta_id');
+    }
+
+    public function uploadedSertifikats()
+    {
+        return $this->hasMany(Sertifikat::class, 'uploaded_by');
+    }
 }

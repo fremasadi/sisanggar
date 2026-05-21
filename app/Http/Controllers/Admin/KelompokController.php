@@ -51,18 +51,12 @@ class KelompokController extends Controller
         $kelompok->load([
             'pelatih',
             'anggota.peserta',
-            'jadwals',
-            'presensis',
-            'ujians.kelompokTujuan',
         ]);
 
         $pesertas = User::where('role', 'peserta')->where('status_aktif', true)->orderBy('name')->get();
         $nextKelompok = $kelompok->nextKelompokInTrack();
-        $targetKelompoks = $nextKelompok
-            ? collect([$nextKelompok])
-            : Kelompok::whereKeyNot($kelompok->id)->orderBy('level_urutan')->get();
 
-        return view('admin.kelompok.show', compact('kelompok', 'pesertas', 'targetKelompoks', 'nextKelompok'));
+        return view('admin.kelompok.show', compact('kelompok', 'pesertas', 'nextKelompok'));
     }
 
     public function edit(Kelompok $kelompok)

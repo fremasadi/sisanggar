@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\BookingController;
+use App\Http\Controllers\Admin\GaleriController;
 use App\Http\Controllers\Admin\HasilUjianKelompokController;
 use App\Http\Controllers\Admin\JadwalKelompokController;
 use App\Http\Controllers\Admin\KelompokController;
@@ -9,6 +10,7 @@ use App\Http\Controllers\Admin\KostumController;
 use App\Http\Controllers\Admin\PelatihController;
 use App\Http\Controllers\Admin\PresensiController;
 use App\Http\Controllers\Admin\PresensiDetailController;
+use App\Http\Controllers\Admin\SertifikatController;
 use App\Http\Controllers\Admin\SppController as AdminSppController;
 use App\Http\Controllers\Admin\UjianKelompokController;
 use App\Http\Controllers\Admin\UserController;
@@ -26,6 +28,7 @@ use App\Http\Controllers\Pelatih\PresensiDetailController as PelatihPresensiDeta
 use App\Http\Controllers\Pelatih\UjianKelompokController as PelatihUjianKelompokController;
 use App\Http\Controllers\Peserta\KelompokController as PesertaKelompokController;
 use App\Http\Controllers\Peserta\PresensiController as PesertaPresensiController;
+use App\Http\Controllers\Peserta\SertifikatController as PesertaSertifikatController;
 use App\Http\Controllers\Peserta\SppController as PesertaSppController;
 use App\Http\Controllers\Peserta\UjianKelompokController as PesertaUjianKelompokController;
 use Illuminate\Support\Facades\Route;
@@ -59,8 +62,10 @@ Route::middleware('auth')->group(function () {
         Route::resource('users', UserController::class);
         Route::resource('pelatih', PelatihController::class);
         Route::resource('kostum', KostumController::class);
+        Route::resource('galeri', GaleriController::class)->only(['index', 'store', 'update', 'destroy']);
         Route::resource('kelompok', KelompokController::class);
         Route::get('presensi', [PresensiController::class, 'index'])->name('presensi.index');
+        Route::post('presensi', [PresensiController::class, 'storeFromIndex'])->name('presensi.store-from-index');
         Route::get('presensi/{presensi}', [PresensiController::class, 'show'])->name('presensi.show');
         Route::patch('presensi/{presensi}', [PresensiController::class, 'update'])->name('presensi.update');
 
@@ -72,10 +77,17 @@ Route::middleware('auth')->group(function () {
         Route::get('spp', [AdminSppController::class, 'index'])->name('spp.index');
         Route::post('spp/generate', [AdminSppController::class, 'generate'])->name('spp.generate');
 
+        Route::get('sertifikat', [SertifikatController::class, 'index'])->name('sertifikat.index');
+        Route::post('sertifikat', [SertifikatController::class, 'store'])->name('sertifikat.store');
+        Route::get('sertifikat/{sertifikat}/download', [SertifikatController::class, 'download'])->name('sertifikat.download');
+        Route::delete('sertifikat/{sertifikat}', [SertifikatController::class, 'destroy'])->name('sertifikat.destroy');
+
         Route::post('kelompok/{kelompok}/peserta', [KelompokPesertaController::class, 'store'])->name('kelompok-peserta.store');
         Route::patch('kelompok-peserta/{anggota}', [KelompokPesertaController::class, 'update'])->name('kelompok-peserta.update');
         Route::delete('kelompok-peserta/{anggota}', [KelompokPesertaController::class, 'destroy'])->name('kelompok-peserta.destroy');
 
+        Route::get('jadwal-kelompok', [JadwalKelompokController::class, 'index'])->name('jadwal-kelompok.index');
+        Route::post('jadwal-kelompok', [JadwalKelompokController::class, 'storeFromIndex'])->name('jadwal-kelompok.store-from-index');
         Route::post('kelompok/{kelompok}/jadwal', [JadwalKelompokController::class, 'store'])->name('jadwal-kelompok.store');
         Route::patch('jadwal-kelompok/{jadwal}', [JadwalKelompokController::class, 'update'])->name('jadwal-kelompok.update');
         Route::delete('jadwal-kelompok/{jadwal}', [JadwalKelompokController::class, 'destroy'])->name('jadwal-kelompok.destroy');
@@ -83,6 +95,8 @@ Route::middleware('auth')->group(function () {
         Route::post('kelompok/{kelompok}/presensi', [PresensiController::class, 'store'])->name('presensi.store');
         Route::patch('presensi-detail/{detail}', [PresensiDetailController::class, 'update'])->name('presensi-detail.update');
 
+        Route::get('ujian-kelompok', [UjianKelompokController::class, 'index'])->name('ujian-kelompok.index');
+        Route::post('ujian-kelompok', [UjianKelompokController::class, 'storeFromIndex'])->name('ujian-kelompok.store-from-index');
         Route::post('kelompok/{kelompok}/ujian', [UjianKelompokController::class, 'store'])->name('ujian-kelompok.store');
         Route::get('ujian-kelompok/{ujian}', [UjianKelompokController::class, 'show'])->name('ujian-kelompok.show');
         Route::post('ujian-kelompok/{ujian}/promote', [UjianKelompokController::class, 'promote'])->name('ujian-kelompok.promote');
@@ -97,6 +111,8 @@ Route::middleware('auth')->group(function () {
         Route::get('kelompok', [PesertaKelompokController::class, 'show'])->name('kelompok.show');
         Route::get('presensi', [PesertaPresensiController::class, 'index'])->name('presensi.index');
         Route::get('ujian', [PesertaUjianKelompokController::class, 'index'])->name('ujian.index');
+        Route::get('sertifikat', [PesertaSertifikatController::class, 'index'])->name('sertifikat.index');
+        Route::get('sertifikat/{sertifikat}/download', [PesertaSertifikatController::class, 'download'])->name('sertifikat.download');
     });
 
     Route::middleware(['role:pelatih'])->prefix('pelatih')->name('pelatih.')->group(function () {
@@ -104,6 +120,7 @@ Route::middleware('auth')->group(function () {
         Route::get('kelompok/{kelompok}', [PelatihKelompokController::class, 'show'])->name('kelompok.show');
 
         Route::get('presensi', [PelatihPresensiController::class, 'index'])->name('presensi.index');
+        Route::post('presensi', [PelatihPresensiController::class, 'storeFromIndex'])->name('presensi.store-from-index');
         Route::post('kelompok/{kelompok}/presensi', [PelatihPresensiController::class, 'store'])->name('presensi.store');
         Route::get('presensi/{presensi}', [PelatihPresensiController::class, 'show'])->name('presensi.show');
         Route::patch('presensi/{presensi}', [PelatihPresensiController::class, 'update'])->name('presensi.update');

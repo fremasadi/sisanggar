@@ -52,6 +52,13 @@
             </a>
         </li>
 
+        <li class="nav-item {{ request()->is('admin/galeri*') ? 'active' : '' }}">
+            <a class="nav-link" href="{{ route('admin.galeri.index') }}">
+                <i class="fas fa-fw fa-images"></i>
+                <span>Galeri</span>
+            </a>
+        </li>
+
         <hr class="sidebar-divider">
 
         {{-- Group: Operasional --}}
@@ -71,6 +78,13 @@
             </a>
         </li>
 
+        <li class="nav-item {{ request()->is('admin/jadwal-kelompok*') ? 'active' : '' }}">
+            <a class="nav-link" href="{{ route('admin.jadwal-kelompok.index') }}">
+                <i class="fas fa-fw fa-calendar-alt"></i>
+                <span>Jadwal Kelompok</span>
+            </a>
+        </li>
+
         <li class="nav-item {{ request()->is('admin/presensi*') ? 'active' : '' }}">
             <a class="nav-link" href="{{ route('admin.presensi.index') }}">
                 <i class="fas fa-fw fa-clipboard-check"></i>
@@ -78,10 +92,24 @@
             </a>
         </li>
 
+        <li class="nav-item {{ request()->is('admin/ujian-kelompok*') ? 'active' : '' }}">
+            <a class="nav-link" href="{{ route('admin.ujian-kelompok.index') }}">
+                <i class="fas fa-fw fa-graduation-cap"></i>
+                <span>Ujian Kelompok</span>
+            </a>
+        </li>
+
         <li class="nav-item {{ request()->is('admin/spp*') ? 'active' : '' }}">
             <a class="nav-link" href="{{ route('admin.spp.index') }}">
                 <i class="fas fa-fw fa-money-bill-wave"></i>
                 <span>SPP </span>
+            </a>
+        </li>
+
+        <li class="nav-item {{ request()->is('admin/sertifikat*') ? 'active' : '' }}">
+            <a class="nav-link" href="{{ route('admin.sertifikat.index') }}">
+                <i class="fas fa-fw fa-certificate"></i>
+                <span>Sertifikat</span>
             </a>
         </li>
 
@@ -141,6 +169,13 @@
             <a class="nav-link" href="{{ route('peserta.ujian.index') }}">
                 <i class="fas fa-fw fa-graduation-cap"></i>
                 <span>Ujian Saya</span>
+            </a>
+        </li>
+
+        <li class="nav-item {{ request()->is('peserta/sertifikat*') ? 'active' : '' }}">
+            <a class="nav-link" href="{{ route('peserta.sertifikat.index') }}">
+                <i class="fas fa-fw fa-certificate"></i>
+                <span>Sertifikat Saya</span>
             </a>
         </li>
     @endif

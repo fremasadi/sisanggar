@@ -1,14 +1,13 @@
 <x-app-layout>
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="h3 text-gray-800 mb-0">Manajemen Presensi</h1>
+        <div>
+            <h1 class="h3 text-gray-800 mb-0">Jadwal Kelompok</h1>
+            <small class="text-muted">Atur jadwal latihan untuk setiap kelompok.</small>
+        </div>
     </div>
 
     @if(session('success'))
         <div class="alert alert-success">{{ session('success') }}</div>
-    @endif
-
-    @if(session('error'))
-        <div class="alert alert-danger">{{ session('error') }}</div>
     @endif
 
     @if($errors->any())
@@ -22,9 +21,9 @@
     @endif
 
     <div class="card shadow mb-4">
-        <div class="card-header bg-warning text-dark">Buat Sesi Presensi</div>
+        <div class="card-header bg-primary text-white">Tambah Jadwal</div>
         <div class="card-body">
-            <form action="{{ route('admin.presensi.store-from-index') }}" method="POST" class="row g-2">
+            <form action="{{ route('admin.jadwal-kelompok.store-from-index') }}" method="POST" class="row g-2">
                 @csrf
                 <div class="col-md-3">
                     <label class="form-label">Kelompok</label>
@@ -38,23 +37,27 @@
                     </select>
                 </div>
                 <div class="col-md-2">
-                    <label class="form-label">Tanggal</label>
-                    <input type="date" name="tanggal_presensi" class="form-control" value="{{ old('tanggal_presensi', now()->toDateString()) }}" required>
+                    <label class="form-label">Hari</label>
+                    <input type="text" name="hari" class="form-control" value="{{ old('hari') }}" placeholder="Senin" required>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Jam Mulai</label>
+                    <input type="time" name="jam_mulai" class="form-control" value="{{ old('jam_mulai') }}" required>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Jam Selesai</label>
+                    <input type="time" name="jam_selesai" class="form-control" value="{{ old('jam_selesai') }}" required>
                 </div>
                 <div class="col-md-3">
-                    <label class="form-label">Judul Pertemuan</label>
-                    <input type="text" name="judul_pertemuan" class="form-control" value="{{ old('judul_pertemuan') }}" placeholder="Judul pertemuan">
+                    <label class="form-label">Lokasi</label>
+                    <input type="text" name="lokasi" class="form-control" value="{{ old('lokasi') }}" placeholder="Lokasi">
                 </div>
-                <div class="col-md-2">
-                    <label class="form-label">Materi</label>
-                    <input type="text" name="materi" class="form-control" value="{{ old('materi') }}" placeholder="Materi">
-                </div>
-                <div class="col-md-2">
+                <div class="col-md-9">
                     <label class="form-label">Catatan</label>
                     <input type="text" name="catatan" class="form-control" value="{{ old('catatan') }}" placeholder="Catatan">
                 </div>
-                <div class="col-md-12">
-                    <button class="btn btn-warning">Buat Presensi</button>
+                <div class="col-md-3 d-flex align-items-end">
+                    <button class="btn btn-primary w-100">Tambah Jadwal</button>
                 </div>
             </form>
         </div>
@@ -64,8 +67,8 @@
         <div class="card-body">
             <form method="GET" class="row g-2 align-items-end">
                 <div class="col-md-4">
-                    <label class="form-label">Cari Kelompok / Judul</label>
-                    <input type="text" name="search" value="{{ request('search') }}" class="form-control" placeholder="Cari presensi...">
+                    <label class="form-label">Cari Kelompok / Lokasi / Hari</label>
+                    <input type="text" name="search" value="{{ request('search') }}" class="form-control" placeholder="Cari jadwal...">
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">Kelompok</label>
@@ -82,7 +85,7 @@
                     <button class="btn btn-danger w-100">Filter</button>
                 </div>
                 <div class="col-md-2">
-                    <a href="{{ route('admin.presensi.index') }}" class="btn btn-secondary w-100">Reset</a>
+                    <a href="{{ route('admin.jadwal-kelompok.index') }}" class="btn btn-secondary w-100">Reset</a>
                 </div>
             </form>
         </div>
@@ -94,34 +97,32 @@
                 <table class="table table-bordered align-middle">
                     <thead>
                         <tr>
-                            <th>Tanggal</th>
                             <th>Kelompok</th>
-                            <th>Judul Pertemuan</th>
-                            <th>Dibuat Oleh</th>
-                            <th width="100">Aksi</th>
+                            <th>Hari</th>
+                            <th>Jam</th>
+                            <th>Lokasi</th>
+                            <th>Catatan</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse($presensis as $presensi)
+                        @forelse($jadwals as $jadwal)
                             <tr>
-                                <td>{{ $presensi->tanggal_presensi->format('d/m/Y') }}</td>
-                                <td>{{ $presensi->kelompok->nama_kelompok ?? '-' }}</td>
-                                <td>{{ $presensi->judul_pertemuan ?: '-' }}</td>
-                                <td>{{ $presensi->dibuatOleh->name ?? '-' }}</td>
-                                <td>
-                                    <a href="{{ route('admin.presensi.show', $presensi) }}" class="btn btn-sm btn-info text-white">Detail</a>
-                                </td>
+                                <td>{{ $jadwal->kelompok->nama_kelompok ?? '-' }}</td>
+                                <td>{{ $jadwal->hari }}</td>
+                                <td>{{ substr($jadwal->jam_mulai, 0, 5) }} - {{ substr($jadwal->jam_selesai, 0, 5) }}</td>
+                                <td>{{ $jadwal->lokasi ?: '-' }}</td>
+                                <td>{{ $jadwal->catatan ?: '-' }}</td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="5" class="text-center text-muted">Belum ada data presensi.</td>
+                                <td colspan="5" class="text-center text-muted">Belum ada jadwal kelompok.</td>
                             </tr>
                         @endforelse
                     </tbody>
                 </table>
             </div>
 
-            {{ $presensis->links() }}
+            {{ $jadwals->links() }}
         </div>
     </div>
 </x-app-layout>

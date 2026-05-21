@@ -72,6 +72,34 @@
 
 
 
+    <!-- Galeri Section -->
+    @if(isset($galeris) && $galeris->count() > 0)
+        <section id="galeri" class="py-20 bg-white">
+            <div class="container mx-auto px-4">
+                <div class="text-center mb-16">
+                    <h2 class="text-4xl font-bold text-gray-800 mb-4">Galeri Kegiatan</h2>
+                    <div class="w-24 h-1 bg-red-600 mx-auto mb-4"></div>
+                    <p class="text-gray-600 max-w-2xl mx-auto">Dokumentasi kegiatan dan penampilan Sanggar Tari Kembang Sore</p>
+                </div>
+
+                <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    @foreach($galeris as $galeri)
+                        <div class="group relative overflow-hidden rounded-lg shadow-lg bg-gray-100 h-72">
+                            <img src="{{ asset('galeri/' . $galeri->image) }}"
+                                alt="{{ $galeri->judul ?: 'Galeri Sanggar Tari Kembang Sore' }}"
+                                class="h-full w-full object-cover transition duration-500 group-hover:scale-105">
+                            @if($galeri->judul)
+                                <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-5">
+                                    <h3 class="text-white text-lg font-semibold">{{ $galeri->judul }}</h3>
+                                </div>
+                            @endif
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+        </section>
+    @endif
+
     <!-- Kostum Section -->
     <section id="kostum" class="py-20 bg-gray-50">
         <div class="container mx-auto px-4">
