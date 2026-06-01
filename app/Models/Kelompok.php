@@ -39,6 +39,18 @@ class Kelompok extends Model
         return $this->hasMany(JadwalKelompok::class)->orderBy('hari')->orderBy('jam_mulai');
     }
 
+    public function liburs()
+    {
+        return $this->hasMany(LiburKelompok::class)->latest('tanggal');
+    }
+
+    public function liburAktifs()
+    {
+        return $this->hasMany(LiburKelompok::class)
+            ->where('status', 'aktif')
+            ->orderBy('tanggal');
+    }
+
     public function ujians()
     {
         return $this->hasMany(UjianKelompok::class)->latest('tanggal_ujian');

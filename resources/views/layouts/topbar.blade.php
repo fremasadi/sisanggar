@@ -10,6 +10,46 @@
 
     <!-- Topbar Navbar -->
     <ul class="navbar-nav ml-auto">
+        @auth
+            @php
+                $unreadNotifications = Auth::user()->unreadNotifications()->latest()->take(5)->get();
+            @endphp
+
+            <li class="nav-item dropdown no-arrow mx-1">
+                <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button"
+                   data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="fas fa-bell fa-fw"></i>
+                    @if($unreadNotifications->count())
+                        <span class="badge badge-danger badge-counter">{{ $unreadNotifications->count() }}</span>
+                    @endif
+                </a>
+                <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
+                     aria-labelledby="alertsDropdown">
+                    <h6 class="dropdown-header">Notifikasi</h6>
+                    @forelse($unreadNotifications as $notification)
+                        <div class="dropdown-item d-flex align-items-center">
+                            <div class="mr-3">
+                                <div class="icon-circle bg-danger">
+                                    <i class="fas fa-calendar-times text-white"></i>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="small text-gray-500">{{ $notification->created_at->format('d/m/Y H:i') }}</div>
+                                <span class="font-weight-bold">{{ $notification->data['message'] ?? 'Ada notifikasi baru.' }}</span>
+                            </div>
+                        </div>
+                    @empty
+                        <div class="dropdown-item text-center small text-gray-500">Belum ada notifikasi baru.</div>
+                    @endforelse
+                    @if($unreadNotifications->count())
+                        <form action="{{ route('notifications.read-all') }}" method="POST">
+                            @csrf
+                            <button class="dropdown-item text-center small text-gray-500">Tandai semua dibaca</button>
+                        </form>
+                    @endif
+                </div>
+            </li>
+        @endauth
 
         <!-- Divider -->
         <div class="topbar-divider d-none d-sm-block"></div>

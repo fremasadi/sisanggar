@@ -22,4 +22,9 @@ class JadwalKelompok extends Model
     {
         return $this->belongsTo(Kelompok::class);
     }
+
+    public function liburs()
+    {
+        return $this->hasMany(LiburKelompok::class);
+    }
 }

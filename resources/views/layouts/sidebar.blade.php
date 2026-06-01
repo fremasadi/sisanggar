@@ -85,6 +85,13 @@
             </a>
         </li>
 
+        <li class="nav-item {{ request()->is('admin/libur-kelompok*') ? 'active' : '' }}">
+            <a class="nav-link" href="{{ route('admin.libur-kelompok.index') }}">
+                <i class="fas fa-fw fa-calendar-times"></i>
+                <span>Libur Kelompok</span>
+            </a>
+        </li>
+
         <li class="nav-item {{ request()->is('admin/presensi*') ? 'active' : '' }}">
             <a class="nav-link" href="{{ route('admin.presensi.index') }}">
                 <i class="fas fa-fw fa-clipboard-check"></i>

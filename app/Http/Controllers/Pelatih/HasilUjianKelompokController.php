@@ -15,7 +15,7 @@ class HasilUjianKelompokController extends Controller
         abort_unless($hasil->ujianKelompok?->kelompok?->pelatih_id === auth()->id(), 403, 'Anda tidak berhak mengubah nilai ujian ini.');
 
         $validated = $request->validate([
-            'hasil' => 'required|in:menunggu,lulus,tidak_lulus',
+            'hasil' => 'required|in:menunggu,lulus,mengulang,tidak_lulus',
             'nilai' => 'nullable|integer|min:0|max:100',
             'catatan' => 'nullable|string',
         ]);

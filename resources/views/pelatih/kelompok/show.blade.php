@@ -15,6 +15,47 @@
         <div class="alert alert-danger">{{ session('error') }}</div>
     @endif
 
+    @php
+        $liburMendatang = $kelompok->liburAktifs
+            ->filter(fn ($libur) => $libur->tanggal->isToday() || $libur->tanggal->isFuture());
+    @endphp
+
+    @if($liburMendatang->isNotEmpty())
+        <div class="card shadow mb-4">
+            <div class="card-header">Libur Mendatang</div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th>Tanggal</th>
+                                <th>Jadwal</th>
+                                <th>Judul</th>
+                                <th>Alasan</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($liburMendatang as $libur)
+                                <tr>
+                                    <td>{{ $libur->tanggal->format('d/m/Y') }}</td>
+                                    <td>
+                                        @if($libur->jadwal)
+                                            {{ $libur->jadwal->hari }} {{ substr($libur->jadwal->jam_mulai, 0, 5) }} - {{ substr($libur->jadwal->jam_selesai, 0, 5) }}
+                                        @else
+                                            Semua jadwal
+                                        @endif
+                                    </td>
+                                    <td>{{ $libur->judul }}</td>
+                                    <td>{{ $libur->alasan ?: '-' }}</td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    @endif
+
     <div class="card shadow mb-4">
         <div class="card-header">Peserta yang Dilatih</div>
         <div class="card-body">

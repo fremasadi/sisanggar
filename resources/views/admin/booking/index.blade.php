@@ -64,8 +64,8 @@
                         <th>Pengambilan</th>
                         <th>Pengembalian</th>
                         <th>Total Biaya</th>
-                        <th>Status</th>
-                        <th>Verifikasi</th>
+                        <th class="text-white">Status</th>
+                        <th class="text-white">Verifikasi</th>
                         <th width="80">Aksi</th>
                     </tr>
                 </thead>

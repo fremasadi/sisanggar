@@ -20,7 +20,7 @@
                             <td>{{ $hasil->ujianKelompok->nama_ujian }}</td>
                             <td>{{ $hasil->ujianKelompok->kelompok->nama_kelompok }}</td>
                             <td>{{ $hasil->ujianKelompok->tanggal_ujian->format('d/m/Y') }}</td>
-                            <td>{{ ucfirst($hasil->hasil) }}</td>
+                            <td>{{ $hasil->hasil_label }}</td>
                             <td>{{ $hasil->nilai ?? '-' }}</td>
                             <td>{{ $hasil->ujianKelompok->kelompokTujuan->nama_kelompok ?? '-' }}</td>
                         </tr>

@@ -27,6 +27,8 @@ class KelompokController extends Controller
 
         $kelompok->load([
             'anggota.peserta',
+            'jadwals',
+            'liburAktifs.jadwal',
         ]);
 
         return view('pelatih.kelompok.show', compact('kelompok'));

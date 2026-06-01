@@ -15,6 +15,30 @@
         <div class="card shadow mb-4">
             <div class="card-header">Jadwal Latihan</div>
             <div class="card-body">
+                @php
+                    $liburMendatang = $anggota->kelompok->liburAktifs
+                        ->filter(fn ($libur) => $libur->tanggal->isToday() || $libur->tanggal->isFuture());
+                @endphp
+
+                @if($liburMendatang->isNotEmpty())
+                    <div class="alert alert-warning">
+                        <strong>Info Libur:</strong>
+                        <ul class="mb-0">
+                            @foreach($liburMendatang as $libur)
+                                <li>
+                                    {{ $libur->tanggal->format('d/m/Y') }} - {{ $libur->judul }}
+                                    @if($libur->jadwal)
+                                        ({{ $libur->jadwal->hari }} {{ substr($libur->jadwal->jam_mulai, 0, 5) }})
+                                    @endif
+                                    @if($libur->alasan)
+                                        : {{ $libur->alasan }}
+                                    @endif
+                                </li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+
                 <table class="table table-bordered">
                     <thead>
                         <tr>

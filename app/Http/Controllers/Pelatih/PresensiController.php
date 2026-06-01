@@ -75,6 +75,10 @@ class PresensiController extends Controller
 
         $anggotaAktif = $kelompok->anggota()->where('status', 'aktif')->get();
 
+        if ($this->hasActiveLibur($kelompok, $validated['tanggal_presensi'])) {
+            return back()->with('error', 'Tanggal ini sudah ditandai libur untuk kelompok tersebut. Presensi tidak dapat dibuat.');
+        }
+
         if ($anggotaAktif->isEmpty()) {
             return back()->with('error', 'Kelompok ini belum memiliki anggota aktif untuk dipresensikan.');
         }
@@ -121,6 +125,10 @@ class PresensiController extends Controller
             'catatan' => 'nullable|string',
         ]);
 
+        if ($this->hasActiveLibur($presensi->kelompok, $validated['tanggal_presensi'])) {
+            return back()->with('error', 'Tanggal ini sudah ditandai libur untuk kelompok tersebut. Presensi tidak dapat diperbarui.');
+        }
+
         $presensi->update($validated);
 
         return redirect()->route('pelatih.presensi.show', $presensi)->with('success', 'Informasi presensi berhasil diperbarui.');
@@ -135,5 +143,12 @@ class PresensiController extends Controller
     {
         $presensi->loadMissing('kelompok');
         $this->authorizeKelompok($presensi->kelompok);
+    }
+
+    private function hasActiveLibur(Kelompok $kelompok, string $tanggal): bool
+    {
+        return $kelompok->liburAktifs()
+            ->whereDate('tanggal', $tanggal)
+            ->exists();
     }
 }

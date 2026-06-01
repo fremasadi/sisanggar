@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\JadwalKelompokController;
 use App\Http\Controllers\Admin\KelompokController;
 use App\Http\Controllers\Admin\KelompokPesertaController;
 use App\Http\Controllers\Admin\KostumController;
+use App\Http\Controllers\Admin\LiburKelompokController;
 use App\Http\Controllers\Admin\PelatihController;
 use App\Http\Controllers\Admin\PresensiController;
 use App\Http\Controllers\Admin\PresensiDetailController;
@@ -20,6 +21,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\FrontController;
 use App\Http\Controllers\GuestBookingController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\Pelatih\HasilUjianKelompokController as PelatihHasilUjianKelompokController;
 use App\Http\Controllers\Pelatih\KelompokController as PelatihKelompokController;
@@ -58,6 +60,9 @@ Route::get('/payment/unfinish', [PaymentController::class, 'unfinish'])->name('p
 Route::get('/payment/error', [PaymentController::class, 'error'])->name('payment.error');
 
 Route::middleware('auth')->group(function () {
+    Route::post('/notifications/read-all', [NotificationController::class, 'markAllAsRead'])
+        ->name('notifications.read-all');
+
     Route::middleware(['role:admin'])->prefix('admin')->name('admin.')->group(function () {
         Route::resource('users', UserController::class);
         Route::resource('pelatih', PelatihController::class);
@@ -91,6 +96,10 @@ Route::middleware('auth')->group(function () {
         Route::post('kelompok/{kelompok}/jadwal', [JadwalKelompokController::class, 'store'])->name('jadwal-kelompok.store');
         Route::patch('jadwal-kelompok/{jadwal}', [JadwalKelompokController::class, 'update'])->name('jadwal-kelompok.update');
         Route::delete('jadwal-kelompok/{jadwal}', [JadwalKelompokController::class, 'destroy'])->name('jadwal-kelompok.destroy');
+
+        Route::get('libur-kelompok', [LiburKelompokController::class, 'index'])->name('libur-kelompok.index');
+        Route::post('libur-kelompok', [LiburKelompokController::class, 'store'])->name('libur-kelompok.store');
+        Route::delete('libur-kelompok/{liburKelompok}', [LiburKelompokController::class, 'destroy'])->name('libur-kelompok.destroy');
 
         Route::post('kelompok/{kelompok}/presensi', [PresensiController::class, 'store'])->name('presensi.store');
         Route::patch('presensi-detail/{detail}', [PresensiDetailController::class, 'update'])->name('presensi-detail.update');

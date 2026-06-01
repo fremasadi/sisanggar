@@ -41,8 +41,8 @@
                                 <td>{{ $hasil->peserta->name ?? '-' }}</td>
                                 <td>
                                     <select name="hasil" form="hasil-form-{{ $hasil->id }}" class="form-select form-select-sm">
-                                        @foreach(['menunggu', 'lulus', 'tidak_lulus'] as $status)
-                                            <option value="{{ $status }}" {{ $hasil->hasil === $status ? 'selected' : '' }}>{{ ucfirst($status) }}</option>
+                                        @foreach(\App\Models\HasilUjianKelompok::HASIL_OPTIONS as $status => $label)
+                                            <option value="{{ $status }}" {{ $hasil->hasil === $status ? 'selected' : '' }}>{{ $label }}</option>
                                         @endforeach
                                     </select>
                                 </td>
