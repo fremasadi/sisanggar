@@ -104,6 +104,7 @@ Route::middleware('auth')->group(function () {
 
         Route::post('kelompok/{kelompok}/presensi', [PresensiController::class, 'store'])->name('presensi.store');
         Route::patch('presensi-detail/{detail}', [PresensiDetailController::class, 'update'])->name('presensi-detail.update');
+        Route::patch('presensi/{presensi}/detail-bulk', [PresensiDetailController::class, 'updateBulk'])->name('presensi-detail.update-bulk');
 
         Route::get('ujian-kelompok', [UjianKelompokController::class, 'index'])->name('ujian-kelompok.index');
         Route::post('ujian-kelompok', [UjianKelompokController::class, 'storeFromIndex'])->name('ujian-kelompok.store-from-index');
@@ -136,6 +137,7 @@ Route::middleware('auth')->group(function () {
         Route::get('presensi/{presensi}', [PelatihPresensiController::class, 'show'])->name('presensi.show');
         Route::patch('presensi/{presensi}', [PelatihPresensiController::class, 'update'])->name('presensi.update');
         Route::patch('presensi-detail/{detail}', [PelatihPresensiDetailController::class, 'update'])->name('presensi-detail.update');
+        Route::patch('presensi/{presensi}/detail-bulk', [PelatihPresensiDetailController::class, 'updateBulk'])->name('presensi-detail.update-bulk');
 
         Route::get('ujian', [PelatihUjianKelompokController::class, 'index'])->name('ujian.index');
         Route::get('ujian/{ujian}', [PelatihUjianKelompokController::class, 'show'])->name('ujian.show');

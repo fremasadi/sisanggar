@@ -19,4 +19,24 @@ class PresensiDetailController extends Controller
 
         return back()->with('success', 'Status presensi peserta berhasil diperbarui.');
     }
+    public function updateBulk(Request $request, \App\Models\Presensi $presensi)
+    {
+        $validated = $request->validate([
+            'details' => 'required|array',
+            'details.*.id' => 'required|exists:presensi_details,id',
+            'details.*.status_kehadiran' => 'required|in:hadir,izin,sakit,alpa',
+            'details.*.catatan' => 'nullable|string',
+        ]);
+
+        foreach ($validated['details'] as $detailData) {
+            PresensiDetail::where('id', $detailData['id'])
+                ->where('presensi_id', $presensi->id)
+                ->update([
+                    'status_kehadiran' => $detailData['status_kehadiran'],
+                    'catatan' => $detailData['catatan'],
+                ]);
+        }
+
+        return back()->with('success', 'Semua status presensi berhasil diperbarui.');
+    }
 }

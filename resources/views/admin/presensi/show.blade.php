@@ -41,50 +41,54 @@
     </div>
 
     <div class="card shadow">
-        <div class="card-header bg-primary text-white">Daftar Kehadiran Peserta</div>
+        <div class="card-header bg-danger text-white">Daftar Kehadiran Peserta</div>
         <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-bordered align-middle">
-                    <thead>
-                        <tr>
-                            <th>Peserta</th>
-                            <th>Status Kehadiran</th>
-                            <th>Catatan</th>
-                            <th width="120">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse($presensi->details as $detail)
+            <form action="{{ route('admin.presensi-detail.update-bulk', $presensi) }}" method="POST">
+                @csrf
+                @method('PATCH')
+                <div class="table-responsive">
+                    <table class="table table-bordered align-middle">
+                        <thead>
                             <tr>
-                                <td>{{ $detail->peserta->name ?? '-' }}</td>
-                                <td>
-                                    <select name="status_kehadiran" form="presensi-detail-{{ $detail->id }}" class="form-select form-select-sm">
-                                        @foreach(['hadir', 'izin', 'sakit', 'alpa'] as $status)
-                                            <option value="{{ $status }}" {{ $detail->status_kehadiran === $status ? 'selected' : '' }}>
-                                                {{ ucfirst($status) }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </td>
-                                <td>
-                                    <input type="text" name="catatan" value="{{ $detail->catatan }}" form="presensi-detail-{{ $detail->id }}" class="form-control form-control-sm">
-                                </td>
-                                <td>
-                                    <form id="presensi-detail-{{ $detail->id }}" action="{{ route('admin.presensi-detail.update', $detail) }}" method="POST">
-                                        @csrf
-                                        @method('PATCH')
-                                        <button class="btn btn-sm btn-warning w-100">Simpan</button>
-                                    </form>
-                                </td>
+                                <th>Peserta</th>
+                                <th>Status Kehadiran</th>
+                                <th>Catatan</th>
                             </tr>
-                        @empty
-                            <tr>
-                                <td colspan="4" class="text-center text-muted">Belum ada detail presensi peserta.</td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
+                        </thead>
+                        <tbody>
+                            @forelse($presensi->details as $index => $detail)
+                                <tr>
+                                    <td>
+                                        {{ $detail->peserta->name ?? '-' }}
+                                        <input type="hidden" name="details[{{ $index }}][id]" value="{{ $detail->id }}">
+                                    </td>
+                                    <td>
+                                        <select name="details[{{ $index }}][status_kehadiran]" class="form-select form-select-sm">
+                                            @foreach(['hadir', 'izin', 'sakit', 'alpa'] as $status)
+                                                <option value="{{ $status }}" {{ $detail->status_kehadiran === $status ? 'selected' : '' }}>
+                                                    {{ ucfirst($status) }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <input type="text" name="details[{{ $index }}][catatan]" value="{{ $detail->catatan }}" class="form-control form-control-sm">
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="3" class="text-center text-muted">Belum ada detail presensi peserta.</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+                @if($presensi->details->isNotEmpty())
+                    <div class="d-flex justify-content-end mt-3">
+                        <button type="submit" class="btn btn-warning">Simpan Semua Kehadiran</button>
+                    </div>
+                @endif
+            </form>
         </div>
     </div>
 </x-app-layout>

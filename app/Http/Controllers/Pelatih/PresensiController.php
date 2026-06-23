@@ -111,6 +111,19 @@ class PresensiController extends Controller
 
         $presensi->load(['kelompok', 'details.peserta']);
 
+        $presensiMonth = \Carbon\Carbon::parse($presensi->tanggal_presensi)->format('Y-m');
+        $pesertaIds = $presensi->details->pluck('peserta_id');
+
+        $unpaidPesertaIds = \App\Models\SppTagihan::whereIn('peserta_id', $pesertaIds)
+            ->where('status', 'menunggu')
+            ->where('bulan_tagihan', 'like', $presensiMonth . '%')
+            ->pluck('peserta_id')
+            ->toArray();
+
+        $presensi->setRelation('details', $presensi->details->filter(function ($detail) use ($unpaidPesertaIds) {
+            return !in_array($detail->peserta_id, $unpaidPesertaIds);
+        }));
+
         return view('pelatih.presensi.show', compact('presensi'));
     }
 
