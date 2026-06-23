@@ -23,8 +23,8 @@
     <div class="col-md-6 mb-3">
         <label>Role</label>
         <select name="role" class="form-control @error('role') is-invalid @enderror" required>
-            @foreach(['admin', 'peserta'] as $role)
-                <option value="{{ $role }}" {{ old('role', $user->role) == $role ? 'selected' : '' }}>
+            @foreach(['admin', 'pelatih', 'peserta', 'pengunjung'] as $role)
+                <option value="{{ $role }}" {{ old('role', $user->role ?? 'peserta') == $role ? 'selected' : '' }}>
                     {{ ucfirst($role) }}
                 </option>
             @endforeach

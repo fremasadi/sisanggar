@@ -72,10 +72,16 @@
                     </p>
                 </div>
                 <div class="col-lg-5 mt-4 mt-lg-0">
-                    <div class="bg-white rounded-lg shadow-sm border p-4">
-                        <p class="mb-2 text-muted">Pendapatan Bulan Ini</p>
-                        <div class="h2 mb-0 font-weight-bold text-danger">
-                            Rp {{ number_format($pendapatanBulanIni, 0, ',', '.') }}
+                    <div class="bg-white rounded-lg shadow-sm border p-3 mb-2">
+                        <p class="mb-1 text-muted small">Booking Kostum Bulan Ini</p>
+                        <div class="h4 mb-0 font-weight-bold text-danger">
+                            Rp {{ number_format($pendapatanBooking, 0, ',', '.') }}
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-sm border p-3">
+                        <p class="mb-1 text-muted small">SPP Peserta Bulan Ini</p>
+                        <div class="h4 mb-0 font-weight-bold text-primary">
+                            Rp {{ number_format($pendapatanSpp, 0, ',', '.') }}
                         </div>
                     </div>
                 </div>
@@ -120,11 +126,38 @@
                 <div class="card metric-card metric-card--warning h-100">
                     <div class="metric-card__accent"></div>
                     <div class="card-body">
-                        <div class="text-xs font-weight-bold text-uppercase text-warning mb-2">Pendapatan Bulan Ini</div>
-                        <div class="metric-card__value" style="font-size: 1.7rem;">
+                        <div class="text-xs font-weight-bold text-uppercase text-warning mb-2">Booking Kostum</div>
+                        <div class="metric-card__value" style="font-size: 1.55rem;">
+                            Rp {{ number_format($pendapatanBooking, 0, ',', '.') }}
+                        </div>
+                        <div class="metric-card__hint mt-2">Pendapatan booking kostum bulan ini.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-xl-6 col-md-6 mb-4">
+                <div class="card metric-card metric-card--primary h-100">
+                    <div class="metric-card__accent" style="background: linear-gradient(90deg, #0ea5e9, #6366f1);"></div>
+                    <div class="card-body">
+                        <div class="text-xs font-weight-bold text-uppercase mb-2" style="color:#0ea5e9;">SPP Peserta</div>
+                        <div class="metric-card__value" style="font-size: 1.55rem;">
+                            Rp {{ number_format($pendapatanSpp, 0, ',', '.') }}
+                        </div>
+                        <div class="metric-card__hint mt-2">Pendapatan SPP yang sudah dibayar bulan ini.</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-6 col-md-6 mb-4">
+                <div class="card metric-card h-100" style="border:0;">
+                    <div class="metric-card__accent" style="background: linear-gradient(90deg, #dc3545, #f59e0b);"></div>
+                    <div class="card-body">
+                        <div class="text-xs font-weight-bold text-uppercase text-danger mb-2">Total Pendapatan Bulan Ini</div>
+                        <div class="metric-card__value" style="font-size: 1.55rem;">
                             Rp {{ number_format($pendapatanBulanIni, 0, ',', '.') }}
                         </div>
-                        <div class="metric-card__hint mt-2">Akumulasi booking dan SPP yang sudah dibayar.</div>
+                        <div class="metric-card__hint mt-2">Akumulasi booking kostum + SPP peserta.</div>
                     </div>
                 </div>
             </div>
@@ -155,34 +188,61 @@
                     }
 
                     const labels = @json($chartLabels);
-                    const data = @json($chartTotals);
+                    const dataBooking = @json($chartBooking);
+                    const dataSpp = @json($chartSpp);
 
                     new Chart(canvas, {
                         type: 'bar',
                         data: {
                             labels,
-                            datasets: [{
-                                label: 'Pendapatan',
-                                data,
-                                borderRadius: 12,
-                                borderSkipped: false,
-                                backgroundColor: [
-                                    '#fda4af',
-                                    '#fb7185',
-                                    '#f97316',
-                                    '#f59e0b',
-                                    '#ef4444',
-                                    '#dc2626'
-                                ],
-                                hoverBackgroundColor: '#b91c1c'
-                            }]
+                            datasets: [
+                                {
+                                    label: 'Booking Kostum',
+                                    data: dataBooking,
+                                    borderRadius: 8,
+                                    borderSkipped: false,
+                                    backgroundColor: 'rgba(239, 68, 68, 0.75)',
+                                    hoverBackgroundColor: '#dc2626'
+                                },
+                                {
+                                    label: 'SPP Peserta',
+                                    data: dataSpp,
+                                    borderRadius: 8,
+                                    borderSkipped: false,
+                                    backgroundColor: 'rgba(14, 165, 233, 0.75)',
+                                    hoverBackgroundColor: '#0284c7'
+                                }
+                            ]
                         },
+                        plugins: [{
+                            id: 'totalLabel',
+                            afterDatasetsDraw(chart) {
+                                const { ctx, data } = chart;
+                                chart.getDatasetMeta(1).data.forEach((bar, i) => {
+                                    const booking = data.datasets[0].data[i] || 0;
+                                    const spp = data.datasets[1].data[i] || 0;
+                                    const total = booking + spp;
+                                    if (total === 0) return;
+                                    ctx.save();
+                                    ctx.font = 'bold 10px sans-serif';
+                                    ctx.fillStyle = '#6b7280';
+                                    ctx.textAlign = 'center';
+                                    ctx.fillText('Rp ' + Number(total).toLocaleString('id-ID'), bar.x, bar.y - 6);
+                                    ctx.restore();
+                                });
+                            }
+                        }],
                         options: {
                             responsive: true,
                             maintainAspectRatio: false,
                             plugins: {
                                 legend: {
-                                    display: false
+                                    display: true,
+                                    position: 'top',
+                                    labels: {
+                                        usePointStyle: true,
+                                        padding: 16
+                                    }
                                 },
                                 tooltip: {
                                     callbacks: {

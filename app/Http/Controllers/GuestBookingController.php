@@ -66,7 +66,7 @@ class GuestBookingController extends Controller
             ]);
 
             return redirect()->route('guest-booking.history')
-                ->with('success', 'Booking berhasil dikirim. Admin akan menghubungi Anda melalui WhatsApp.')
+                ->with('success', 'Booking berhasil dikirim. Diharapkan untuk ke sanggar untuk melakukan pengukuran kostum.')
                 ->withInput([
                     'nama' => $request->nama,
                     'no_hp' => $request->no_hp,

@@ -62,11 +62,10 @@
                             <div class="bg-gray-50 rounded-xl p-4">
                                 <p class="font-semibold text-gray-800 mb-2">Catatan Admin</p>
                                 <p class="text-sm text-gray-700">{{ $booking->verification_notes ?: 'Belum ada catatan verifikasi.' }}</p>
-                                @if($booking->no_hp_pemesan_normalized)
-                                    <a href="https://wa.me/{{ $booking->no_hp_pemesan_normalized }}" target="_blank" class="inline-block mt-3 text-sm text-green-600 font-semibold">
-                                        Hubungi via WhatsApp
-                                    </a>
-                                @endif
+                                
+                                <a href="https://wa.me/6285113660105" target="_blank" class="inline-block mt-3 text-sm text-green-600 font-semibold">
+                                    Hubungi via WhatsApp
+                                </a>
                             </div>
                         </div>
 

@@ -22,7 +22,7 @@
     @endif
 
     <div class="card shadow mb-4">
-        <div class="card-header bg-warning text-dark">Buat Sesi Presensi</div>
+        <div class="card-header bg-danger text-white">Buat Sesi Presensi</div>
         <div class="card-body">
             <form action="{{ route('admin.presensi.store-from-index') }}" method="POST" class="row g-2">
                 @csrf
@@ -54,7 +54,7 @@
                     <input type="text" name="catatan" class="form-control" value="{{ old('catatan') }}" placeholder="Catatan">
                 </div>
                 <div class="col-md-12">
-                    <button class="btn btn-warning">Buat Presensi</button>
+                    <button class="btn btn-danger">Buat Presensi</button>
                 </div>
             </form>
         </div>

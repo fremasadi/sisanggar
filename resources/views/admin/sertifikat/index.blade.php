@@ -27,7 +27,7 @@
                 @csrf
                 <div class="col-md-3">
                     <label class="form-label">Peserta</label>
-                    <select name="peserta_id" class="form-select" required>
+                    <select name="peserta_id" id="select-peserta" class="form-select" required>
                         <option value="">Pilih peserta</option>
                         @foreach($pesertas as $peserta)
                             <option value="{{ $peserta->id }}" {{ (string) old('peserta_id') === (string) $peserta->id ? 'selected' : '' }}>
@@ -69,7 +69,7 @@
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">Peserta</label>
-                    <select name="peserta_id" class="form-select">
+                    <select name="peserta_id" id="select-filter-peserta" class="form-select">
                         <option value="">Semua Peserta</option>
                         @foreach($pesertas as $peserta)
                             <option value="{{ $peserta->id }}" {{ (string) request('peserta_id') === (string) $peserta->id ? 'selected' : '' }}>
@@ -136,4 +136,30 @@
             {{ $sertifikats->links() }}
         </div>
     </div>
+
+    @push('scripts')
+    <!-- jQuery (dibutuhkan oleh Select2) -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <!-- Select2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" rel="stylesheet" />
+    <!-- Select2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            $('#select-peserta').select2({
+                theme: 'bootstrap-5',
+                placeholder: 'Pilih atau cari peserta...',
+                width: '100%'
+            });
+            $('#select-filter-peserta').select2({
+                theme: 'bootstrap-5',
+                placeholder: 'Semua Peserta',
+                width: '100%',
+                allowClear: true
+            });
+        });
+    </script>
+    @endpush
 </x-app-layout>

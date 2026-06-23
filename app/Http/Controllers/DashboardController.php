@@ -46,33 +46,38 @@ class DashboardController extends Controller
             ->pluck('total', 'month_key');
 
         $chartLabels = [];
-        $chartTotals = [];
+        $chartBooking = [];
+        $chartSpp = [];
 
         foreach ($months as $month) {
             $key = $month->format('Y-m');
-            $chartLabels[] = $month->translatedFormat('M Y');
-            $chartTotals[] = (float) ($bookingRevenue[$key] ?? 0) + (float) ($sppRevenue[$key] ?? 0);
+            $chartLabels[]  = $month->translatedFormat('M Y');
+            $chartBooking[] = (float) ($bookingRevenue[$key] ?? 0);
+            $chartSpp[]     = (float) ($sppRevenue[$key] ?? 0);
         }
 
         $currentMonthStart = now()->startOfMonth();
-        $currentMonthEnd = now()->endOfMonth();
+        $currentMonthEnd   = now()->endOfMonth();
 
-        $bookingMonthRevenue = BookingKostum::whereIn('status', ['dibayar', 'diambil', 'selesai'])
+        $pendapatanBooking = BookingKostum::whereIn('status', ['dibayar', 'diambil', 'selesai'])
             ->whereBetween('created_at', [$currentMonthStart, $currentMonthEnd])
             ->sum('total_biaya');
 
-        $sppMonthRevenue = SppTagihan::where('status', 'dibayar')
+        $pendapatanSpp = SppTagihan::where('status', 'dibayar')
             ->whereBetween('paid_at', [$currentMonthStart, $currentMonthEnd])
             ->sum('nominal');
 
         return view('dashboard', [
-            'isAdminDashboard' => true,
-            'totalPeserta' => User::where('role', 'peserta')->count(),
-            'pesertaAktif' => User::where('role', 'peserta')->where('status_aktif', true)->count(),
-            'totalPelatih' => User::where('role', 'pelatih')->count(),
-            'pendapatanBulanIni' => $bookingMonthRevenue + $sppMonthRevenue,
-            'chartLabels' => $chartLabels,
-            'chartTotals' => $chartTotals,
+            'isAdminDashboard'  => true,
+            'totalPeserta'      => User::where('role', 'peserta')->count(),
+            'pesertaAktif'      => User::where('role', 'peserta')->where('status_aktif', true)->count(),
+            'totalPelatih'      => User::where('role', 'pelatih')->count(),
+            'pendapatanBooking' => $pendapatanBooking,
+            'pendapatanSpp'     => $pendapatanSpp,
+            'pendapatanBulanIni'=> $pendapatanBooking + $pendapatanSpp,
+            'chartLabels'       => $chartLabels,
+            'chartBooking'      => $chartBooking,
+            'chartSpp'          => $chartSpp,
         ]);
     }
 }

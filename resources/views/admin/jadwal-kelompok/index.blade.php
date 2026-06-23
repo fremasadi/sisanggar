@@ -21,7 +21,7 @@
     @endif
 
     <div class="card shadow mb-4">
-        <div class="card-header bg-primary text-white">Tambah Jadwal</div>
+        <div class="card-header bg-danger text-white">Tambah Jadwal</div>
         <div class="card-body">
             <form action="{{ route('admin.jadwal-kelompok.store-from-index') }}" method="POST" class="row g-2">
                 @csrf
@@ -57,7 +57,7 @@
                     <input type="text" name="catatan" class="form-control" value="{{ old('catatan') }}" placeholder="Catatan">
                 </div>
                 <div class="col-md-3 d-flex align-items-end">
-                    <button class="btn btn-primary w-100">Tambah Jadwal</button>
+                    <button class="btn btn-danger w-100">Tambah Jadwal</button>
                 </div>
             </form>
         </div>

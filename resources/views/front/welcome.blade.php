@@ -25,7 +25,7 @@
                     </div>
                 </div>
                 <div class="md:w-1/2 flex justify-center">
-                    <img src="{{ asset('images/logo.png') }}" alt="Logo Sanggar Tari Kembang Sore" class="w-80 h-80 object-contain drop-shadow-2xl animate-pulse">
+                    <img src="{{ asset('images/logo.png') }}" alt="Logo Sanggar Tari Kembang Sore" class="w-80 h-80 object-contain drop-shadow-2xl ">
                 </div>
             </div>
         </div>
@@ -170,7 +170,8 @@
         <div class="container mx-auto px-4 text-center">
             <h2 class="text-4xl font-bold mb-6">Siap Bergabung dengan Kami?</h2>
             <p class="text-xl mb-8 text-red-100">Daftar sekarang dan dapatkan kelas !</p>
-            <a href="https://wa.me/6281234567890?text=Halo%20saya%20ingin%20daftar%20kelas"
+            
+            <a href="https://api.whatsapp.com/send?phone=6285113660105&text=Hallo%20Saya%20ingin%20daftar%20kelas"
             target="_blank"
             class="bg-white text-red-700 px-10 py-4 rounded-full font-semibold hover:bg-red-50 transition duration-300 shadow-lg inline-block">
                 Daftar Sekarang

@@ -139,10 +139,10 @@
                         </div>
                         @endisset
 
-                        <button onclick="calculateTotal()" 
+                        <!--<button onclick="calculateTotal()" 
                                 class="w-full bg-orange-500 text-white py-3 rounded-lg hover:bg-orange-600 transition font-semibold">
                             🧮 Hitung Total
-                        </button>
+                        </button> -->
                     </div>
                 </div>
 
@@ -265,8 +265,7 @@ function calculateTotal() {
     const tanggalPengembalian = document.getElementById('tanggal_pengembalian').value;
     
     if (!tanggalPengambilan || !tanggalPengembalian) {
-        alert('Mohon pilih tanggal pengambilan dan pengembalian');
-        return;
+        return; // Hapus alert agar tidak mengganggu, cukup hentikan fungsi jika ada yang kosong
     }
     
     // Validasi tanggal
@@ -274,11 +273,10 @@ function calculateTotal() {
     const dateKembali = new Date(tanggalPengembalian);
     
     if (dateKembali <= dateAmbil) {
-        alert('Tanggal pengembalian harus setelah tanggal pengambilan');
-        return;
+        return; // Hentikan jika tanggal kembali salah
     }
     
-    // Submit form
+    // Submit form secara otomatis
     const form = document.createElement('form');
     form.method = 'POST';
     form.action = '{{ route("cart.calculate") }}';
@@ -306,6 +304,21 @@ function calculateTotal() {
     form.submit();
 }
 
+// Fungsi untuk mengecek dan trigger hitung otomatis
+function checkAndCalculate() {
+    const ambil = document.getElementById('tanggal_pengambilan').value;
+    const kembali = document.getElementById('tanggal_pengembalian').value;
+
+    if (ambil && kembali) {
+        const dateAmbil = new Date(ambil);
+        const dateKembali = new Date(kembali);
+
+        if (dateKembali > dateAmbil) {
+            calculateTotal();
+        }
+    }
+}
+
 // Auto set minimum date for return date when pickup date changes
 document.getElementById('tanggal_pengambilan')?.addEventListener('change', function() {
     const pickupDate = new Date(this.value);
@@ -319,7 +332,15 @@ document.getElementById('tanggal_pengambilan')?.addEventListener('change', funct
     // Reset return date if it's before new minimum
     if (returnDateInput.value && returnDateInput.value < minReturnDate) {
         returnDateInput.value = '';
+    } else {
+        // Trigger perhitungan jika tanggal kembalinya sudah valid
+        checkAndCalculate();
     }
+});
+
+// Trigger otomatis saat tanggal pengembalian diubah
+document.getElementById('tanggal_pengembalian')?.addEventListener('change', function() {
+    checkAndCalculate();
 });
 </script>
 @endpush

@@ -10,6 +10,9 @@
     @if(session('success'))
         <div class="alert alert-success">{{ session('success') }}</div>
     @endif
+    @if(session('error'))
+        <div class="alert alert-danger">{{ session('error') }}</div>
+    @endif
 
     <div class="card shadow mb-4">
         <div class="card-body">
@@ -40,7 +43,7 @@
                             <tr>
                                 <td>{{ $hasil->peserta->name ?? '-' }}</td>
                                 <td>
-                                    <select name="hasil" form="pelatih-hasil-ujian-{{ $hasil->id }}" class="form-select form-select-sm">
+                                    <select name="hasil" form="pelatih-hasil-ujian-{{ $hasil->id }}" class="form-select form-select-sm select-hasil" data-target-id="nilai-{{ $hasil->id }}">
                                         @foreach(\App\Models\HasilUjianKelompok::HASIL_OPTIONS as $status => $label)
                                             <option value="{{ $status }}" {{ $hasil->hasil === $status ? 'selected' : '' }}>
                                                 {{ $label }}
@@ -49,7 +52,7 @@
                                     </select>
                                 </td>
                                 <td>
-                                    <input type="number" min="0" max="100" name="nilai" value="{{ $hasil->nilai }}" form="pelatih-hasil-ujian-{{ $hasil->id }}" class="form-control form-control-sm">
+                                    <input type="number" id="nilai-{{ $hasil->id }}" name="nilai" value="{{ $hasil->nilai }}" form="pelatih-hasil-ujian-{{ $hasil->id }}" class="form-control form-control-sm input-nilai">
                                 </td>
                                 <td>
                                     <input type="text" name="catatan" value="{{ $hasil->catatan }}" form="pelatih-hasil-ujian-{{ $hasil->id }}" class="form-control form-control-sm">
@@ -72,4 +75,103 @@
             </div>
         </div>
     </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const selects = document.querySelectorAll('.select-hasil');
+            selects.forEach(select => {
+                updateLimitNilai(select); 
+                select.addEventListener('change', function() {
+                    updateLimitNilai(this, true); 
+                });
+            });
+
+            const inputNilais = document.querySelectorAll('.input-nilai');
+            inputNilais.forEach(input => {
+                input.addEventListener('invalid', function (e) {
+                    if (this.validity.rangeUnderflow) {
+                        this.setCustomValidity('Nilai tidak boleh kurang dari ' + this.min + '.');
+                    } else if (this.validity.rangeOverflow) {
+                        this.setCustomValidity('Nilai tidak boleh lebih dari ' + this.max + '.');
+                    } else if (this.validity.valueMissing) {
+                        this.setCustomValidity('Nilai wajib diisi.');
+                    } else {
+                        this.setCustomValidity('');
+                    }
+                });
+
+                input.addEventListener('input', function (e) {
+                    this.setCustomValidity('');
+                });
+            });
+
+            const forms = document.querySelectorAll('form[id^="pelatih-hasil-ujian-"]');
+            forms.forEach(form => {
+                form.addEventListener('submit', function(e) {
+                    const id = this.id.replace('pelatih-hasil-ujian-', '');
+                    const select = document.querySelector(`.select-hasil[data-target-id="nilai-${id}"]`);
+                    const input = document.getElementById(`nilai-${id}`);
+
+                    if (!select || !input) return;
+
+                    const hasil = select.value;
+                    const nilai = input.value === '' ? '' : parseInt(input.value); 
+
+                    let pesanError = '';
+
+                    if (hasil === 'lulus' && (nilai === '' || nilai < 72 || nilai > 100)) {
+                        pesanError = 'Untuk status Lulus, rentang nilai harus 72 - 100.';
+                    } else if (hasil === 'mengulang' && (nilai === '' || nilai < 60 || nilai > 71)) {
+                        pesanError = 'Untuk status Mengulang, rentang nilai harus 60 - 71.';
+                    } else if (hasil === 'tidak_lulus' && (nilai === '' || nilai < 0 || nilai > 59)) {
+                        pesanError = 'Untuk status Tidak Lulus, rentang nilai harus 0 - 59.';
+                    } else if (hasil === 'menunggu' && nilai !== '') {
+                        pesanError = 'Untuk status Menunggu, nilai harus dikosongkan.';
+                    }
+
+                    if (pesanError !== '') {
+                        e.preventDefault(); 
+                        alert(pesanError);  
+                    }
+                });
+            });
+        });
+
+        function updateLimitNilai(selectElement, isUserAction = false) {
+            const inputId = selectElement.getAttribute('data-target-id');
+            const inputNilai = document.getElementById(inputId);
+            if (!inputNilai) return;
+
+            const hasil = selectElement.value;
+            let currentValue = parseInt(inputNilai.value);
+
+            if (hasil === 'lulus') {
+                inputNilai.min = 72;
+                inputNilai.max = 100;
+                if (isUserAction || isNaN(currentValue) || currentValue < 72) {
+                    inputNilai.value = 72;
+                }
+            } else if (hasil === 'mengulang') {
+                inputNilai.min = 60;
+                inputNilai.max = 71;
+                if (isUserAction || isNaN(currentValue) || currentValue < 60 || currentValue > 71) {
+                    inputNilai.value = 60;
+                }
+            } else if (hasil === 'tidak_lulus') {
+                inputNilai.min = 0;
+                inputNilai.max = 59;
+                if (isUserAction || isNaN(currentValue) || currentValue > 59) {
+                    inputNilai.value = 0;
+                }
+            } else {
+                inputNilai.min = 0;
+                inputNilai.max = 100;
+                if (isUserAction) {
+                    inputNilai.value = '';
+                }
+            }
+            
+            inputNilai.setCustomValidity('');
+        }
+    </script>
 </x-app-layout>

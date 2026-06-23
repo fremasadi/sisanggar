@@ -53,81 +53,83 @@
     <!-- Tabel -->
     <div class="card shadow">
         <div class="card-body">
-            <table class="table table-bordered table-striped align-middle">
-                <thead class="text-black">
-                    <tr>
-                        <th>No</th>
-                        <th>Order ID</th>
-                        <th>Pemesan</th>
-                        <th>Tipe</th>
-                        <th>Tgl Booking</th>
-                        <th>Pengambilan</th>
-                        <th>Pengembalian</th>
-                        <th>Total Biaya</th>
-                        <th class="text-white">Status</th>
-                        <th class="text-white">Verifikasi</th>
-                        <th width="80">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($bookings as $key => $booking)
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped align-middle">
+                    <thead>
                         <tr>
-                            <td>{{ $bookings->firstItem() + $key }}</td>
-                            <td><code>{{ $booking->order_id }}</code></td>
-                            <td>
-                                <div class="fw-semibold">{{ $booking->pemesan_nama }}</div>
-                                <small class="text-muted">{{ $booking->pemesan_no_hp }}</small>
-                            </td>
-                            <td>
-                                <span class="badge bg-{{ $booking->tipe_booking === 'manual' ? 'secondary' : 'primary' }}">
-                                    {{ ucfirst($booking->tipe_booking ?? 'online') }}
-                                </span>
-                            </td>
-                            <td>{{ $booking->tanggal_booking->format('d/m/Y') }}</td>
-                            <td>{{ \Carbon\Carbon::parse($booking->tanggal_pengambilan)->format('d/m/Y') }}</td>
-                            <td>{{ \Carbon\Carbon::parse($booking->tanggal_pengembalian)->format('d/m/Y') }}</td>
-                            <td>Rp {{ number_format($booking->total_biaya, 0, ',', '.') }}</td>
-                            <td>
-                                @php
-                                    $badges = [
-                                        'menunggu'   => 'warning',
-                                        'dibayar'    => 'info',
-                                        'diambil'    => 'primary',
-                                        'selesai'    => 'success',
-                                        'dibatalkan' => 'danger',
-                                    ];
-                                    $badge = $badges[$booking->status] ?? 'secondary';
-                                @endphp
-                                <span class="badge bg-{{ $badge }}">
-                                    {{ ucfirst($booking->status) }}
-                                </span>
-                            </td>
-                            <td>
-                                @php
-                                    $verificationBadge = [
-                                        'pending' => 'warning',
-                                        'confirmed' => 'success',
-                                        'rejected' => 'danger',
-                                    ][$booking->verification_status ?? 'pending'] ?? 'secondary';
-                                @endphp
-                                <span class="badge bg-{{ $verificationBadge }}">
-                                    {{ ucfirst($booking->verification_status ?? 'pending') }}
-                                </span>
-                            </td>
-                            <td>
-                                <a href="{{ route('admin.booking.show', $booking) }}"
-                                   class="btn btn-sm btn-info text-white">
-                                    <i class="fas fa-eye"></i>
-                                </a>
-                            </td>
+                            <th>No</th>
+                            <th>Order ID</th>
+                            <th>Pemesan</th>
+                            <th>Tipe</th>
+                            <th>Tgl Booking</th>
+                            <th>Pengambilan</th>
+                            <th>Pengembalian</th>
+                            <th>Total Biaya</th>
+                            <th>Status</th>
+                            <th>Verifikasi</th>
+                            <th width="80">Aksi</th>
                         </tr>
-                    @empty
-                        <tr>
-                            <td colspan="11" class="text-center text-muted">Belum ada data booking.</td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        @forelse($bookings as $key => $booking)
+                            <tr>
+                                <td>{{ $bookings->firstItem() + $key }}</td>
+                                <td><code>{{ $booking->order_id }}</code></td>
+                                <td>
+                                    <div class="fw-semibold" style="color: black;">{{ $booking->pemesan_nama }}</div>
+                                    <small class="text-muted">{{ $booking->pemesan_no_hp }}</small>
+                                </td>
+                                <td>
+                                    <span class="badge bg-{{ $booking->tipe_booking === 'manual' ? 'secondary' : 'primary' }} text-white" style="color: white !important;">
+                                        {{ ucfirst($booking->tipe_booking ?? 'online') }}
+                                    </span>
+                                </td>
+                                <td>{{ $booking->tanggal_booking->format('d/m/Y') }}</td>
+                                <td>{{ \Carbon\Carbon::parse($booking->tanggal_pengambilan)->format('d/m/Y') }}</td>
+                                <td>{{ \Carbon\Carbon::parse($booking->tanggal_pengembalian)->format('d/m/Y') }}</td>
+                                <td>Rp {{ number_format($booking->total_biaya, 0, ',', '.') }}</td>
+                                <td>
+                                    @php
+                                        $badges = [
+                                            'menunggu'   => 'warning',
+                                            'dibayar'    => 'info',
+                                            'diambil'    => 'primary',
+                                            'selesai'    => 'success',
+                                            'dibatalkan' => 'danger',
+                                        ];
+                                        $badge = $badges[$booking->status] ?? 'secondary';
+                                    @endphp
+                                    <span class="badge bg-{{ $badge }} text-white" style="color: white !important;">
+                                        {{ ucfirst($booking->status) }}
+                                    </span>
+                                </td>
+                                <td>
+                                    @php
+                                        $verificationBadge = [
+                                            'pending' => 'warning',
+                                            'confirmed' => 'success',
+                                            'rejected' => 'danger',
+                                        ][$booking->verification_status ?? 'pending'] ?? 'secondary';
+                                    @endphp
+                                    <span class="badge bg-{{ $verificationBadge }} text-white" style="color: white !important;">
+                                        {{ ucfirst($booking->verification_status ?? 'pending') }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <a href="{{ route('admin.booking.show', $booking) }}"
+                                       class="btn btn-sm btn-info text-white">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="11" class="text-center text-muted">Belum ada data booking.</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
 
             <div class="mt-3">
                 {{ $bookings->links() }}

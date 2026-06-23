@@ -25,16 +25,16 @@
     @endif
 
     <div class="card shadow mb-4">
-        <div class="card-header bg-success text-white">Buat Ujian Kelompok</div>
+        <div class="card-header bg-danger text-white">Buat Ujian Kelompok</div>
         <div class="card-body">
             <form action="{{ route('admin.ujian-kelompok.store-from-index') }}" method="POST" class="row g-2">
                 @csrf
                 <div class="col-md-3">
                     <label class="form-label">Kelompok</label>
-                    <select name="kelompok_id" class="form-select" required>
-                        <option value="">Pilih kelompok</option>
+                    <select name="kelompok_id" id="kelompok-select" class="form-select" required>
+                        <option value="" data-level="0" data-jalur="">Pilih kelompok</option>
                         @foreach($kelompoks as $kelompok)
-                            <option value="{{ $kelompok->id }}" {{ (string) old('kelompok_id') === (string) $kelompok->id ? 'selected' : '' }}>
+                            <option value="{{ $kelompok->id }}" data-level="{{ $kelompok->level_urutan }}" data-jalur="{{ $kelompok->jalur_tingkatan }}" {{ (string) old('kelompok_id') === (string) $kelompok->id ? 'selected' : '' }}>
                                 {{ $kelompok->label_tingkatan ?? $kelompok->nama_kelompok }}
                             </option>
                         @endforeach
@@ -64,10 +64,10 @@
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">Kelompok Tujuan</label>
-                    <select name="kelompok_tujuan_id" class="form-select">
-                        <option value="">Tanpa kelompok tujuan</option>
+                    <select name="kelompok_tujuan_id" id="kelompok-tujuan-select" class="form-select">
+                        <option value="" data-level="0" data-jalur="">Tanpa kelompok tujuan</option>
                         @foreach($kelompoks as $kelompok)
-                            <option value="{{ $kelompok->id }}" {{ (string) old('kelompok_tujuan_id') === (string) $kelompok->id ? 'selected' : '' }}>
+                            <option value="{{ $kelompok->id }}" data-level="{{ $kelompok->level_urutan }}" data-jalur="{{ $kelompok->jalur_tingkatan }}" {{ (string) old('kelompok_tujuan_id') === (string) $kelompok->id ? 'selected' : '' }}>
                                 {{ $kelompok->label_tingkatan ?? $kelompok->nama_kelompok }}
                             </option>
                         @endforeach
@@ -82,7 +82,7 @@
                     <input type="text" name="keterangan" class="form-control" value="{{ old('keterangan') }}" placeholder="Keterangan">
                 </div>
                 <div class="col-md-2 d-flex align-items-end">
-                    <button class="btn btn-success w-100">Buat Ujian</button>
+                    <button class="btn btn-danger w-100">Buat Ujian</button>
                 </div>
             </form>
         </div>
@@ -154,4 +154,50 @@
             {{ $ujians->links() }}
         </div>
     </div>
+
+    @push('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const kelompokSelect = document.getElementById('kelompok-select');
+            const kelompokTujuanSelect = document.getElementById('kelompok-tujuan-select');
+
+            if (!kelompokSelect || !kelompokTujuanSelect) return;
+
+            function filterKelompokTujuan() {
+                const selectedOption = kelompokSelect.options[kelompokSelect.selectedIndex];
+                const selectedLevel = parseInt(selectedOption.getAttribute('data-level')) || 0;
+                const selectedJalur = selectedOption.getAttribute('data-jalur') || '';
+
+                Array.from(kelompokTujuanSelect.options).forEach((option) => {
+                    const optionLevel = parseInt(option.getAttribute('data-level')) || 0;
+                    const optionJalur = option.getAttribute('data-jalur') || '';
+                    
+                    if (option.value === "") {
+                        // Selalu tampilkan opsi "Tanpa kelompok tujuan"
+                        option.style.display = '';
+                        option.disabled = false;
+                    } else if (optionLevel > selectedLevel && selectedLevel > 0 && optionJalur === selectedJalur) {
+                        // Tampilkan opsi yang levelnya lebih tinggi dari kelompok asal DAN dari jenis (jalur) yang sama
+                        option.style.display = '';
+                        option.disabled = false;
+                    } else {
+                        // Sembunyikan dan nonaktifkan opsi yang levelnya lebih rendah / setara atau beda jenis
+                        option.style.display = 'none';
+                        option.disabled = true;
+                    }
+                });
+
+                // Jika opsi kelompok tujuan yang sebelumnya terpilih sekarang di-disable, reset ke "Tanpa kelompok tujuan"
+                if (kelompokTujuanSelect.selectedIndex >= 0 && kelompokTujuanSelect.options[kelompokTujuanSelect.selectedIndex].disabled) {
+                    kelompokTujuanSelect.value = "";
+                }
+            }
+
+            kelompokSelect.addEventListener('change', filterKelompokTujuan);
+            
+            // Jalankan filter saat halaman pertama kali dimuat
+            filterKelompokTujuan();
+        });
+    </script>
+    @endpush
 </x-app-layout>

@@ -81,6 +81,7 @@ Route::middleware('auth')->group(function () {
 
         Route::get('spp', [AdminSppController::class, 'index'])->name('spp.index');
         Route::post('spp/generate', [AdminSppController::class, 'generate'])->name('spp.generate');
+        Route::post('spp/notify', [AdminSppController::class, 'notify'])->name('spp.notify');
 
         Route::get('sertifikat', [SertifikatController::class, 'index'])->name('sertifikat.index');
         Route::post('sertifikat', [SertifikatController::class, 'store'])->name('sertifikat.store');
@@ -110,6 +111,7 @@ Route::middleware('auth')->group(function () {
         Route::get('ujian-kelompok/{ujian}', [UjianKelompokController::class, 'show'])->name('ujian-kelompok.show');
         Route::post('ujian-kelompok/{ujian}/promote', [UjianKelompokController::class, 'promote'])->name('ujian-kelompok.promote');
         Route::patch('hasil-ujian-kelompok/{hasil}', [HasilUjianKelompokController::class, 'update'])->name('hasil-ujian-kelompok.update');
+        Route::patch('ujian-kelompok/{ujian}/hasil-bulk', [HasilUjianKelompokController::class, 'updateBulk'])->name('hasil-ujian-kelompok.update-bulk');
     });
 
     Route::middleware(['role:peserta'])->prefix('peserta')->name('peserta.')->group(function () {

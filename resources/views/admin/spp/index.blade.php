@@ -21,6 +21,15 @@
                     <button class="btn btn-danger w-100">Generate Tagihan Rp 75.000</button>
                 </div>
             </form>
+
+            <!-- Tombol Notifikasi WA -->
+            <form action="{{ route('admin.spp.notify') }}" method="POST" class="mt-3 text-end">
+                @csrf
+                <input type="hidden" name="bulan_tagihan" value="{{ $selectedMonth }}">
+                <button type="submit" class="btn btn-success" onclick="return confirm('Kirim notifikasi WhatsApp ke semua peserta yang belum bayar bulan ini?')">
+                    <i class="fab fa-whatsapp me-1"></i> Kirim Notifikasi WA (Deadline)
+                </button>
+            </form>
         </div>
     </div>
 
