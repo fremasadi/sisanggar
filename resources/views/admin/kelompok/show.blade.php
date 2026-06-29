@@ -159,8 +159,8 @@
                                         </div>
                                         <div class="col-md-5">
                                             <div class="d-flex gap-2">
-                                                <button type="button" class="btn btn-outline-danger btn-sm flex-fill" id="select-all-participants">Pilih Semua</button>
-                                                <button type="button" class="btn btn-outline-secondary btn-sm flex-fill" id="clear-all-participants">Reset</button>
+                                                <button type="button" class="btn btn-outline-danger btn-sm flex-fill" onclick="window.selectAllParticipants()">Pilih Semua</button>
+                                                <button type="button" class="btn btn-outline-secondary btn-sm flex-fill" onclick="window.clearAllParticipants()">Reset</button>
                                             </div>
                                         </div>
                                     </div>
@@ -276,72 +276,80 @@
             </div>
         </div>
     </div>
-</x-app-layout>
+    @push('scripts')
+    <script>
+        // Definisikan fungsi secara global agar selalu bisa dipanggil (mengatasi bug caching/framework rendering)
+        window.updateSelectedCount = function () {
+            const total = document.querySelectorAll('.participant-checkbox:checked').length;
+            const badge = document.getElementById('selected-participant-count');
+            if (badge) badge.textContent = total + ' dipilih';
+        };
 
-@push('scripts')
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const searchInput = document.getElementById('participant-search');
-        const cards = Array.from(document.querySelectorAll('.participant-card'));
-        const checkboxes = Array.from(document.querySelectorAll('.participant-checkbox'));
-        const countBadge = document.getElementById('selected-participant-count');
-        const emptyState = document.getElementById('participant-empty-state');
-        const selectAllButton = document.getElementById('select-all-participants');
-        const clearAllButton = document.getElementById('clear-all-participants');
-
-        function updateSelectedCount() {
-            const totalSelected = checkboxes.filter((checkbox) => checkbox.checked).length;
-            countBadge.textContent = `${totalSelected} dipilih`;
-        }
-
-        function filterParticipants() {
+        window.filterParticipants = function () {
+            const searchInput = document.getElementById('participant-search');
+            if (!searchInput) return;
+            
             const keyword = searchInput.value.trim().toLowerCase();
             let visibleCount = 0;
+            const emptyState = document.getElementById('participant-empty-state');
 
-            cards.forEach((card) => {
+            document.querySelectorAll('.participant-card').forEach(function (card) {
                 const name = card.dataset.participantName || '';
                 const isVisible = !keyword || name.includes(keyword);
+                
                 card.style.display = isVisible ? '' : 'none';
+                if (isVisible) visibleCount++;
+            });
 
-                if (isVisible) {
-                    visibleCount++;
+            if (emptyState) {
+                emptyState.style.display = visibleCount === 0 ? 'block' : 'none';
+            }
+        };
+
+        window.selectAllParticipants = function () {
+            let changed = false;
+            document.querySelectorAll('.participant-card').forEach(function (card) {
+                // Abaikan kartu yang sedang disembunyikan (display: none)
+                if (card.style.display !== 'none') {
+                    const cb = card.querySelector('.participant-checkbox');
+                    if (cb && !cb.checked) {
+                        cb.checked = true;
+                        // Paksa event change agar framework UI apapun mendeteksi perubahannya
+                        cb.dispatchEvent(new Event('change', { bubbles: true }));
+                        changed = true;
+                    }
+                }
+            });
+            if (changed) window.updateSelectedCount();
+        };
+
+        window.clearAllParticipants = function () {
+            let changed = false;
+            document.querySelectorAll('.participant-checkbox:checked').forEach(function (cb) {
+                cb.checked = false;
+                cb.dispatchEvent(new Event('change', { bubbles: true }));
+                changed = true;
+            });
+            if (changed) window.updateSelectedCount();
+        };
+
+        // Inisialisasi awal saat DOM sudah siap
+        document.addEventListener('DOMContentLoaded', function () {
+            const searchInput = document.getElementById('participant-search');
+            if (searchInput) {
+                searchInput.addEventListener('input', window.filterParticipants);
+            }
+
+            // Listener jika pengguna mencentang checkbox secara manual
+            document.addEventListener('change', function (e) {
+                if (e.target && e.target.classList.contains('participant-checkbox')) {
+                    window.updateSelectedCount();
                 }
             });
 
-            emptyState.style.display = visibleCount === 0 ? 'block' : 'none';
-        }
-
-        searchInput?.addEventListener('input', filterParticipants);
-
-        checkboxes.forEach((checkbox) => {
-            checkbox.addEventListener('change', updateSelectedCount);
+            window.filterParticipants();
+            window.updateSelectedCount();
         });
-
-        selectAllButton?.addEventListener('click', function () {
-            cards.forEach((card) => {
-                if (card.style.display === 'none') {
-                    return;
-                }
-
-                const checkbox = card.querySelector('.participant-checkbox');
-                if (checkbox) {
-                    checkbox.checked = true;
-                }
-            });
-
-            updateSelectedCount();
-        });
-
-        clearAllButton?.addEventListener('click', function () {
-            checkboxes.forEach((checkbox) => {
-                checkbox.checked = false;
-            });
-
-            updateSelectedCount();
-        });
-
-        filterParticipants();
-        updateSelectedCount();
-    });
-</script>
-@endpush
+    </script>
+    @endpush
+</x-app-layout>

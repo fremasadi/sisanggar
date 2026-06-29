@@ -83,7 +83,7 @@
                         <div class="h4 mb-0 font-weight-bold text-primary">
                             Rp {{ number_format($pendapatanSpp, 0, ',', '.') }}
                         </div>
-                    </div>
+                    </div>  
                 </div>
             </div>
         </div>

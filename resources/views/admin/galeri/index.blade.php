@@ -126,5 +126,5 @@
         @endforelse
     </div>
 
-    {{ $galeris->links() }}
+    {{ $galeris->links('pagination::bootstrap-5') }}
 </x-app-layout>

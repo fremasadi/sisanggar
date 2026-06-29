@@ -65,7 +65,6 @@
                 <div class="col-md-3">
                     <label class="form-label">Kelompok Tujuan</label>
                     <select name="kelompok_tujuan_id" id="kelompok-tujuan-select" class="form-select">
-                        <option value="" data-level="0" data-jalur="">Tanpa kelompok tujuan</option>
                         @foreach($kelompoks as $kelompok)
                             <option value="{{ $kelompok->id }}" data-level="{{ $kelompok->level_urutan }}" data-jalur="{{ $kelompok->jalur_tingkatan }}" {{ (string) old('kelompok_tujuan_id') === (string) $kelompok->id ? 'selected' : '' }}>
                                 {{ $kelompok->label_tingkatan ?? $kelompok->nama_kelompok }}
@@ -151,7 +150,7 @@
                 </table>
             </div>
 
-            {{ $ujians->links() }}
+            {{ $ujians->links('pagination::bootstrap-5') }}
         </div>
     </div>
 

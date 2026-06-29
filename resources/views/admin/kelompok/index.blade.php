@@ -54,7 +54,7 @@
                 </tbody>
             </table>
 
-            {{ $kelompoks->links() }}
+            {{ $kelompoks->links('pagination::bootstrap-5') }}
         </div>
     </div>
 </x-app-layout>

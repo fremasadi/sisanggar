@@ -88,7 +88,7 @@
                 </table>
             </div>
 
-            {{ $tagihans->links() }}
+            {{ $tagihans->links('pagination::bootstrap-5') }}
         </div>
     </div>
 </x-app-layout>

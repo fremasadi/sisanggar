@@ -122,7 +122,7 @@
                 </table>
             </div>
 
-            {{ $jadwals->links() }}
+            {{ $jadwals->links('pagination::bootstrap-5') }}
         </div>
     </div>
 </x-app-layout>

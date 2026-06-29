@@ -132,7 +132,7 @@
             </div>
 
             <div class="mt-3">
-                {{ $bookings->links() }}
+                {{ $bookings->links('pagination::bootstrap-5') }}
             </div>
         </div>
     </div>

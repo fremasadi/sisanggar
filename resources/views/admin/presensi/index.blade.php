@@ -121,7 +121,7 @@
                 </table>
             </div>
 
-            {{ $presensis->links() }}
+            {{ $presensis->links('pagination::bootstrap-5') }}
         </div>
     </div>
 </x-app-layout>

@@ -160,7 +160,7 @@
                 </table>
             </div>
 
-            {{ $liburs->links() }}
+            {{ $liburs->links('pagination::bootstrap-5') }}
         </div>
     </div>
 </x-app-layout>

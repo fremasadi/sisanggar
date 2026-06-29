@@ -133,7 +133,7 @@
                 </table>
             </div>
 
-            {{ $sertifikats->links() }}
+            {{ $sertifikats->links('pagination::bootstrap-5') }}
         </div>
     </div>
 
