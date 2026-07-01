@@ -122,7 +122,23 @@ class PresensiController extends Controller
             return !in_array($detail->peserta_id, $unpaidPesertaIds);
         }));
 
-        return view('admin.presensi.show', compact('presensi'));
+        $rekap = \Illuminate\Support\Facades\DB::table('presensi_details')
+            ->join('presensis', 'presensi_details.presensi_id', '=', 'presensis.id')
+            ->join('users', 'presensi_details.peserta_id', '=', 'users.id')
+            ->where('presensis.kelompok_id', $presensi->kelompok_id)
+            ->where('presensis.tanggal_presensi', 'like', $presensiMonth . '%')
+            ->select('users.name', 'presensi_details.peserta_id', 
+                \Illuminate\Support\Facades\DB::raw("SUM(CASE WHEN status_kehadiran = 'hadir' THEN 1 ELSE 0 END) as total_hadir"),
+                \Illuminate\Support\Facades\DB::raw("SUM(CASE WHEN status_kehadiran = 'izin' THEN 1 ELSE 0 END) as total_izin"),
+                \Illuminate\Support\Facades\DB::raw("SUM(CASE WHEN status_kehadiran = 'sakit' THEN 1 ELSE 0 END) as total_sakit"),
+                \Illuminate\Support\Facades\DB::raw("SUM(CASE WHEN status_kehadiran = 'alpa' THEN 1 ELSE 0 END) as total_alpa"),
+                \Illuminate\Support\Facades\DB::raw("COUNT(*) as total_pertemuan")
+            )
+            ->groupBy('presensi_details.peserta_id', 'users.name')
+            ->orderBy('users.name')
+            ->get();
+
+        return view('admin.presensi.show', compact('presensi', 'rekap', 'presensiMonth'));
     }
 
     public function update(Request $request, Presensi $presensi)

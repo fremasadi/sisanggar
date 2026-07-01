@@ -90,5 +90,41 @@
                 @endif
             </form>
         </div>
+    <div class="card shadow mt-4">
+        <div class="card-header bg-success text-white">
+            Rekap Absensi Bulan {{ \Carbon\Carbon::parse($presensiMonth)->translatedFormat('F Y') }}
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered align-middle">
+                    <thead>
+                        <tr class="text-center">
+                            <th class="text-start">Peserta</th>
+                            <th>Total Pertemuan</th>
+                            <th class="text-success">Hadir</th>
+                            <th class="text-primary">Izin</th>
+                            <th class="text-warning">Sakit</th>
+                            <th class="text-danger">Alpa</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($rekap as $r)
+                            <tr class="text-center">
+                                <td class="text-start">{{ $r->name }}</td>
+                                <td>{{ $r->total_pertemuan }}</td>
+                                <td>{{ $r->total_hadir }}</td>
+                                <td>{{ $r->total_izin }}</td>
+                                <td>{{ $r->total_sakit }}</td>
+                                <td>{{ $r->total_alpa }}</td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="6" class="text-center text-muted">Belum ada data rekap presensi.</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 </x-app-layout>

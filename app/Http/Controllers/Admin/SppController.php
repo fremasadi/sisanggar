@@ -58,6 +58,7 @@ class SppController extends Controller
 
             if ($tagihan->wasRecentlyCreated) {
                 $generated++;
+                $peserta->notify(new \App\Notifications\UnpaidSppNotification($tagihan));
             }
         }
 
@@ -87,6 +88,10 @@ class SppController extends Controller
         $targets = [];
         foreach ($tagihans as $tagihan) {
             $peserta = $tagihan->peserta;
+            
+            // Kirim notifikasi in-app (database)
+            $peserta->notify(new \App\Notifications\UnpaidSppNotification($tagihan));
+
             if (!empty($peserta->no_hp)) {
                 $targets[] = $peserta->no_hp . '|' . $peserta->name;
             }
